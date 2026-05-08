@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Cart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream:#f9f4ee; --espresso:#2b1a0e; --caramel:#c8883a; --warm:#e8d5b7;
+    }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: linear-gradient(rgba(30,15,5,0.55),rgba(30,15,5,0.55)),
+        url("{% static 'images/Background.png' %}") center/cover fixed;
+      min-height: 100vh;
+    }
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 36px; height: 76px;
+      background: rgba(25,13,4,0.85); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(200,136,58,0.3);
+    }
+    .nav-logo img {
+      width:52px; height:52px; border-radius:50%;
+      border:2px solid var(--caramel); object-fit:cover;
+    }
+    .nav-links { flex:1; display:flex; align-items:center; justify-content:center; gap:36px; list-style:none; }
+    .nav-links a {
+      font-weight:700; font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase;
+      color:var(--warm); text-decoration:none; padding-bottom:3px;
+      border-bottom:2px solid transparent; transition:color 0.25s,border-color 0.25s;
+    }
+    .nav-links a:hover { color:var(--caramel); border-bottom-color:var(--caramel); }
+    .cart-btn {
+      display:flex; align-items:center; gap:8px;
+      background:var(--caramel); color:#fff; text-decoration:none;
+      font-weight:700; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase;
+      padding:9px 22px; border-radius:50px; transition:background 0.25s;
+    }
+    .cart-btn:hover { background:#a86d28; }
+
+    .page-content {
+      max-width: 680px; margin: 60px auto 80px; padding: 0 24px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--cream); font-size: 2.4rem; margin-bottom: 32px; text-align: center;
+    }
+    .cart-item {
+      background: rgba(255,255,255,0.9); border-radius: 12px;
+      padding: 18px 24px; margin-bottom: 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .item-name { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--espresso); }
+    .item-qty  { font-size:0.85rem; color:#7a6050; margin-top:4px; }
+    .item-total{ font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--caramel); font-weight:700; }
+    .cart-total {
+      background: rgba(43,26,14,0.85); border-radius: 12px;
+      padding: 20px 24px; margin-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .cart-total span { color:var(--warm); font-weight:700; letter-spacing:0.06em; text-transform:uppercase; font-size:0.85rem; }
+    .cart-total strong { font-family:'Playfair Display',serif; color:var(--caramel); font-size:1.5rem; }
+    .checkout-btn {
+      display:block; width:100%; text-align:center; margin-top:24px;
+      background:var(--caramel); color:#fff; text-decoration:none;
+      font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+      padding:16px; border-radius:50px; font-size:0.88rem;
+      transition:background 0.25s, transform 0.2s;
+    }
+    .checkout-btn:hover { background:#a86d28; transform:translateY(-2px); }
+    .empty { text-align:center; color:var(--warm); font-size:1.1rem; padding: 60px 0; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="{% url 'home' %}">
+      <img src="{% static 'images/logo.png' %}" alt="JJCafe Logo">
+    </a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'menu' %}">Menu</a></li>
+    <li><a href="{% url 'find_us' %}">Find Us</a></li>
+    <li><a href="{% url 'our_story' %}">Our Story</a></li>
+  </ul>
+
+  <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
+</nav>
+
+  <div class="page-content">
+    <h1>Your Cart</h1>
+    {% if items %}
+      {% for item in items %}
+      <div class="cart-item">
+        <div>
+          <div class="item-name">{{ item.name }}</div>
+          <div class="item-qty">Qty: {{ item.qty }}</div>
+        </div>
+        <div class="item-total">AED {{ item.total }}</div>
+      </div>
+      {% endfor %}
+      <div class="cart-total">
+        <span>Order Total</span>
+        <strong>AED {{ total }}</strong>
+      </div>
+      <a href="/checkout/" class="checkout-btn">Proceed to Checkout →</a>
+    {% else %}
+      <p class="empty">Your cart is empty. <a href="/" style="color:var(--caramel)">Browse the menu</a></p>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Order Confirmed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream:#f9f4ee; --espresso:#2b1a0e; --caramel:#c8883a; --warm:#e8d5b7; }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: linear-gradient(rgba(30,15,5,0.55),rgba(30,15,5,0.55)),
+        url("{% static 'images/Background.png' %}") center/cover fixed;
+      min-height: 100vh; display:flex; flex-direction:column;
+    }
+    .navbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 36px; height:76px;
+      background:rgba(25,13,4,0.85); backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(200,136,58,0.3);
+    }
+    .nav-logo img { width:52px; height:52px; border-radius:50%; border:2px solid var(--caramel); object-fit:cover; }
+    .nav-links { flex:1; display:flex; align-items:center; justify-content:center; gap:36px; list-style:none; }
+    .nav-links a { font-weight:700; font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--warm); text-decoration:none; }
+    .cart-btn { background:var(--caramel); color:#fff; text-decoration:none; font-weight:700; font-size:0.8rem; padding:9px 22px; border-radius:50px; }
+
+    .success-wrap {
+      flex:1; display:flex; align-items:center; justify-content:center; padding:40px 24px;
+    }
+    .success-card {
+      background:rgba(255,255,255,0.92); border-radius:20px;
+      padding:48px 40px; text-align:center; max-width:420px; width:100%;
+      box-shadow:0 16px 48px rgba(0,0,0,0.22);
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes popIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+    .checkmark { font-size:3.5rem; margin-bottom:20px; display:block; }
+    h1 { font-family:'Playfair Display',serif; color:var(--espresso); font-size:1.9rem; margin-bottom:8px; }
+    .tagline { color:#7a6050; font-size:0.9rem; margin-bottom:28px; }
+    .order-details {
+      background:#f9f0e6; border-radius:12px; padding:18px 22px; margin-bottom:28px; text-align:left;
+    }
+    .order-details p { font-size:0.88rem; color:#5a4030; margin-bottom:8px; }
+    .order-details p:last-child { margin-bottom:0; }
+    .order-details strong { color:var(--espresso); }
+    .back-btn {
+      display:inline-block; background:var(--espresso); color:#fff; text-decoration:none;
+      font-weight:700; font-size:0.82rem; letter-spacing:0.12em; text-transform:uppercase;
+      padding:13px 30px; border-radius:50px; transition:background 0.25s;
+    }
+    .back-btn:hover { background:var(--caramel); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-logo">
+      <a href="https://www.cafecitosantafe.com/"><img src="{% static 'images/logo.png' %}" alt="JJCafe Logo"></a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="https://www.cafecitosantafe.com/">Home</a></li>
+      <li><a href="https://www.cafecitosantafe.com/breakfast-lunch-brunch-coffee-patio">Menu</a></li>
+      <li><a href="https://www.cafecitosantafe.com/santafe-railyard-lunch-brunch-coffee-patio">Find Us</a></li>
+      <li><a href="https://www.cafecitosantafe.com/santafe-argentina-armenia-italy-bistro-coffee">Our Story</a></li>
+    </ul>
+    <a href="/cart/" class="cart-btn">🛒 Cart</a>
+  </nav>
+
+  <div class="success-wrap">
+    <div class="success-card">
+      <span class="checkmark">🎉</span>
+      <h1>Order Confirmed!</h1>
+      <p class="tagline">Thank you — your order is on its way.</p>
+      <div class="order-details">
+        <p><strong>Order #</strong> {{ order.id }}</p>
+        <p><strong>Status:</strong> {{ order.status|capfirst }}</p>
+        <p><strong>Total:</strong> AED {{ order.total_amount }}</p>
+      </div>
+      <a href="/" class="back-btn">← Back to Menu</a>
+    </div>
+  </div>
+</body>
+</html>

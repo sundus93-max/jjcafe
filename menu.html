@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:   #f9f4ee;
+      --espresso:#2b1a0e;
+      --caramel: #c8883a;
+      --warm:    #e8d5b7;
+      --text:    #3a2a1a;
+      --card-bg: rgba(255,255,255,0.90);
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background:
+        linear-gradient(rgba(30,15,5,0.55), rgba(30,15,5,0.55)),
+        url("{% static 'images/Background.png' %}") center/cover fixed;
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 36px;
+      height: 76px;
+      background: rgba(25, 13, 4, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(200,136,58,0.3);
+    }
+
+    /* Left — Logo */
+    .nav-logo img {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--caramel);
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .nav-logo img:hover { transform: scale(1.08) rotate(3deg); }
+
+    /* Center — Nav Links */
+    .nav-links {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--warm);
+      text-decoration: none;
+      padding-bottom: 3px;
+      border-bottom: 2px solid transparent;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--caramel);
+      border-bottom-color: var(--caramel);
+    }
+
+    /* Right — Cart */
+    .cart-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--caramel);
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 9px 22px;
+      border-radius: 50px;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .cart-btn:hover { background: #a86d28; transform: translateY(-1px); }
+
+    /* ─── PAGE HEADER ────────────────────────────── */
+    .page-header {
+      text-align: center;
+      padding: 60px 20px 30px;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      color: var(--cream);
+      letter-spacing: 0.04em;
+    }
+    .page-header .subtitle {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: var(--warm);
+      letter-spacing: 0.1em;
+      font-weight: 300;
+    }
+    .divider {
+      width: 60px; height: 2px;
+      background: var(--caramel);
+      margin: 18px auto 0;
+      border-radius: 2px;
+    }
+
+    /* ─── MENU GRID ──────────────────────────────── */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px;
+      max-width: 1100px;
+      margin: 40px auto 80px;
+      padding: 0 28px;
+    }
+
+    .menu-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeUp 0.5s ease both;
+    }
+    .menu-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .menu-card:nth-child(1){animation-delay:0.05s}
+    .menu-card:nth-child(2){animation-delay:0.10s}
+    .menu-card:nth-child(3){animation-delay:0.15s}
+    .menu-card:nth-child(4){animation-delay:0.20s}
+    .menu-card:nth-child(5){animation-delay:0.25s}
+    .menu-card:nth-child(6){animation-delay:0.30s}
+
+    .card-img-wrap {
+      height: 180px;
+      background: linear-gradient(135deg, #e8d0a8, #c8a068);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+      overflow: hidden;
+    }
+    .card-img-wrap img { width:100%; height:100%; object-fit:cover; }
+
+    .card-body { padding: 20px 22px 22px; }
+    .card-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.18rem;
+      color: var(--espresso);
+      margin-bottom: 6px;
+    }
+    .card-body .desc {
+      font-size: 0.83rem;
+      color: #7a6050;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      min-height: 36px;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--caramel);
+      font-weight: 700;
+    }
+    .price span {
+      font-size: 0.72rem;
+      font-family: 'Lato', sans-serif;
+      color: #9a8070;
+      vertical-align: super;
+    }
+    .add-btn {
+      background: var(--espresso);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 9px 18px;
+      border-radius: 50px;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .add-btn:hover { background: var(--caramel); transform: scale(1.05); }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+
+    <!-- Left: Logo -->
+    <div class="nav-logo">
+      <a href="https://www.cafecitosantafe.com/">
+        <img src="{% static 'images/logo.png' %}" alt="JJCafe Logo">
+      </a>
+    </div>
+
+    <!-- Center: Nav Links -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="{% url 'home' %}">
+      <img src="{% static 'images/logo.png' %}" alt="JJCafe Logo">
+    </a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'menu' %}">Menu</a></li>
+    <li><a href="{% url 'find_us' %}">Find Us</a></li>
+    <li><a href="{% url 'our_story' %}">Our Story</a></li>
+  </ul>
+
+  <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
+</nav>
+
+    <!-- Right: Cart -->
+    <div class="nav-cart">
+      <a href="/cart/" class="cart-btn">
+        <span>🛒</span> Cart
+      </a>
+    </div>
+
+  </nav>
+
+  <!-- ══ PAGE HEADER ══ -->
+  <header class="page-header">
+    <h1>Our Menu</h1>
+    <p class="subtitle">Fresh &nbsp;·&nbsp; Local &nbsp;·&nbsp; Soulful</p>
+    <div class="divider"></div>
+  </header>
+
+  <!-- ══ MENU ITEMS ══ -->
+  <main class="menu-grid">
+    {% for item in items %}
+    <div class="menu-card">
+      <div class="card-img-wrap">
+        {% if item.image %}
+          <img src="{{ item.image }}" alt="{{ item.name }}">
+        {% else %}
+          ☕
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <h3>{{ item.name }}</h3>
+        <p class="desc">{{ item.description }}</p>
+        <div class="card-footer">
+          <div class="price"><span>AED </span>{{ item.price }}</div>
+          <a href="/add/{{ item.id }}/" class="add-btn">+ Add</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </main>
+
+  <footer>© JJCafe — Santa Fe · All rights reserved</footer>
+
+</body>
+</html>
