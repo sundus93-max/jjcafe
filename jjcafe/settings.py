@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
-    'cafe',
+    'cafe.apps.CafeConfig',
 ]
 
 
