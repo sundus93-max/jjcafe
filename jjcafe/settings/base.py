@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.google',  # Uncomment only after configuring Google OAuth
 
     # your app
     'cafe.apps.CafeConfig',

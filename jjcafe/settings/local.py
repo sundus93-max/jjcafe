@@ -6,30 +6,27 @@ from .base import *
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-]
+ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1']
 
-# ✅ HTTP safe for localhost (no HTTPS needed)
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_SSL_REDIRECT = False
-SECURE_PROXY_SSL_HEADER = None
-
-SESSION_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SAMESITE = "Lax"
-
-# ✅ Allow CSRF from localhost
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
-
-# ✅ Use SQLite locally (no PostgreSQL needed)
+# Local MySQL database
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jjcafe_db',
+        'USER': 'root',
+        'PASSWORD': '',         # ← Change to your MySQL password
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_TRANS_TABLES',
+        }
     }
 }
+
+# Local media serving
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Disable secure cookies locally
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE    = False

@@ -1,16 +1,9 @@
-"""
-WSGI config for jjcafe project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
-"""
-
 import os
-
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jjcafe.settings')
+# Reads DJANGO_SETTINGS_MODULE env var
+# On Render: set to 'jjcafe.settings.production'
+# Locally:   set to 'jjcafe.settings.local'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jjcafe.settings.local')
 
 application = get_wsgi_application()
