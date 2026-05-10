@@ -230,3 +230,28 @@ class OrderNotification(models.Model):
 
     def __str__(self):
         return f'Notification for {self.user.email}: {self.message}'
+
+
+# ── PROXY MODELS FOR ADMIN USER MANAGEMENT ───────────────────────────────────
+# These provide separate admin sections for Staff and Customers
+
+class StaffUserProxy(User):
+    """Proxy model to manage staff users separately in the admin."""
+    class Meta:
+        proxy = True
+        verbose_name        = 'Staff Member'
+        verbose_name_plural = 'Staff Members'
+
+    def __str__(self):
+        return self.get_full_name() or self.username
+
+
+class CustomerUserProxy(User):
+    """Proxy model to manage customer accounts separately in the admin."""
+    class Meta:
+        proxy = True
+        verbose_name        = 'Customer Account'
+        verbose_name_plural = 'Customer Accounts'
+
+    def __str__(self):
+        return self.get_full_name() or self.username
