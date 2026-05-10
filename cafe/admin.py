@@ -7,8 +7,8 @@ from .models import (
     CustomerProfile, Order, OrderItem, Promotion, PaymentMethod
 )
 
-# ── Import proxy models from Django auth (created by allauth migration) ───────
-from .models import (... StaffUserProxy, CustomerUserProxy)  # ✅
+# ── Import proxy models defined in cafe/models.py ────────────────────────────
+from .models import StaffUserProxy, CustomerUserProxy
 
 # ── Remove default Users and Groups from admin ────────────────────────────────
 admin.site.unregister(User)
