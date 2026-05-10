@@ -25,7 +25,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://jjcafe.onrender.com",
 ]
 
+# IMPORTANT FOR RENDER HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -82,7 +84,7 @@ MIDDLEWARE = [
 ]
 
 # =====================================================
-# ROOT
+# URL / WSGI
 # =====================================================
 
 ROOT_URLCONF = 'jjcafe.urls'
@@ -120,6 +122,7 @@ if os.environ.get("DATABASE_URL"):
     DATABASES = {
         "default": dj_database_url.config(
             conn_max_age=600,
+            ssl_require=True
         )
     }
 else:
@@ -129,30 +132,26 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
 # =====================================================
 # AUTH
-SITE_ID = 1
-
-LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+# =====================================================
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
 # =====================================================
-# ALLAUTH CONFIG (FIXED FOR GOOGLE LOGIN)
+# ALLAUTH (CLEAN FIX)
 # =====================================================
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
 SOCIALACCOUNT_PROVIDERS = {
