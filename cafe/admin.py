@@ -395,3 +395,29 @@ class OrderNotificationAdmin(admin.ModelAdmin):
     list_display = ('user', 'message', 'is_read', 'created_at')
     list_filter  = ('is_read',)
     ordering     = ('-created_at',)
+
+
+# ══════════════════════════════════════════════════════════════
+#  HIDE ALLAUTH ADMIN ENTRIES
+#  (allauth auto-registers EmailAddress & SocialAccount in admin
+#   — we unregister them to avoid 500s and keep the admin clean)
+# ══════════════════════════════════════════════════════════════
+def _unregister_allauth():
+    try:
+        from allauth.account.models import EmailAddress
+        admin.site.unregister(EmailAddress)
+    except Exception:
+        pass
+
+    try:
+        from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
+        for model in (SocialApp, SocialAccount, SocialToken):
+            try:
+                admin.site.unregister(model)
+            except Exception:
+                pass
+
+    except Exception:
+        pass
+
+_unregister_allauth()
