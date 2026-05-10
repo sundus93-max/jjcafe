@@ -182,7 +182,9 @@
     {% endif %}
     <!-- CART -->
     <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
-    <!-- ADMIN (only once) -->
+    {% if user.is_staff %}
+    <a href="{% url 'admin:index' %}" class="cart-btn" style="background:rgba(200,136,58,0.3);margin-left:6px">⚙️ Admin</a>
+    {% endif %}
     {% if user.is_staff %}
     <a href="{% url 'admin:index' %}" class="cart-btn" style="background:rgba(200,136,58,0.3);margin-left:6px">⚙️ Admin</a>
     {% endif %}

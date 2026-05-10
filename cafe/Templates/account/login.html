@@ -1,4 +1,4 @@
-{% load static %}
+{% load static socialaccount %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +68,10 @@
       </div>
       <button type="submit" class="login-btn">Sign In</button>
     </form>
-    
+    <div class="divider">or</div>
+    <a href="{% provider_login_url 'google' %}" class="google-btn">
+      <span class="google-icon">G</span> Continue with Google
+    </a>
     <div class="back-link" style="margin-top:14px">
       <a href="{% url 'account_signup' %}">Don't have an account? <b>Create one →</b></a>
     </div>

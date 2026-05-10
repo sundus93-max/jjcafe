@@ -9,16 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from .models import SiteBranding, Category, Item, ContactInfo, StorySection
-from django.http import JsonResponse
-from .models import SiteBranding, Promotion
 
-
-def debug_db(request):
-    data = {
-        "branding": list(SiteBranding.objects.values()),
-        "promotions": list(Promotion.objects.values()),
-    }
-    return JsonResponse(data)
 
 # ─── PAGES ─────────────────────────────────────────────────────────────
 

@@ -18,7 +18,5 @@ urlpatterns = [
     path('api/promotions/',  views.api_promotions,  name='api_promotions'),
 ]
 
-# ── Serve media files in both dev and production ──────────────
-# (Render doesn't persist media between deploys — use Cloudinary
-#  or similar for permanent uploads. This keeps things working for now.)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

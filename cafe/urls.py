@@ -1,13 +1,7 @@
 from django.urls import path
 from . import views
-from django.urls import path
-from . import views
-
 
 urlpatterns = [
-
-     #db
-        path('debug-db/', views.debug_db, name='debug_db'),
     # ── Pages ─────────────────────────────────────────────────
     path('',                                    views.home,                name='home'),
     path('menu/',                               views.menu,                name='menu'),
