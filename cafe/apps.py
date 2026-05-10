@@ -12,6 +12,6 @@ class CafeConfig(AppConfig):
         if not User.objects.filter(username="admin").exists():
             User.objects.create_superuser(
                 username="admin",
-                email="admin@jjcafe.com",
+                email="ahamedj935@gmail.com.com",
                 password="admin123"
             )
