@@ -7,3 +7,35 @@ $env:USE_LIVE_DB="true"
 python manage.py runserver
 📦 Move data
 dumpdata → loaddata
+
+✅ FAST FIX (do this now)
+✔️ Step 1: Force LOCAL DB manually (ignore env)
+
+In settings/local.py change this:
+
+USE_LIVE_DB = False   # FORCE IT
+
+NOT env-based for now.
+
+✔️ Step 2: Fix DATABASES clearly
+
+Replace FULL block with this (clean version):
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jjcafe_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        }
+    }
+}
+✔️ Step 3: Restart server properly
+
+Stop server:
+
+CTRL + C
