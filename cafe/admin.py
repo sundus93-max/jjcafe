@@ -8,7 +8,7 @@ from .models import (
 )
 
 # ── Import proxy models from Django auth (created by allauth migration) ───────
-from django.contrib.auth.models import StaffUserProxy, CustomerUserProxy
+from .models import (... StaffUserProxy, CustomerUserProxy)  # ✅
 
 # ── Remove default Users and Groups from admin ────────────────────────────────
 admin.site.unregister(User)

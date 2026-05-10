@@ -230,3 +230,14 @@ class OrderNotification(models.Model):
 
     def __str__(self):
         return f'Notification for {self.user.email}: {self.message}'
+class StaffUserProxy(User):
+    class Meta:
+        proxy = True
+        verbose_name = 'Staff User'
+        verbose_name_plural = 'Staff Users'
+
+class CustomerUserProxy(User):
+    class Meta:
+        proxy = True
+        verbose_name = 'Customer'
+        verbose_name_plural = 'Customers'
