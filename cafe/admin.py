@@ -84,6 +84,22 @@ class StaffUserAdmin(BaseUserAdmin):
     list_filter   = ('is_staff', 'is_superuser', 'is_active')
     search_fields = ('username', 'email')
 
+    # ── Fields shown when EDITING an existing staff member ──
+    fieldsets = (
+        ('Account',      {'fields': ('username', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'email')}),
+        ('Permissions',  {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Dates',        {'fields': ('last_login', 'date_joined')}),
+    )
+
+    # ── Fields shown when CREATING a new staff member ──
+    add_fieldsets = (
+        ('Create Staff Account', {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'first_name', 'last_name', 'password1', 'password2'),
+        }),
+    )
+
     def get_queryset(self, request):
         return super().get_queryset(request).filter(is_staff=True)
 
