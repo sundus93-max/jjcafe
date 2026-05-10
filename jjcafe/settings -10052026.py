@@ -1,28 +1,16 @@
 """
-Django settings for jjcafe project (PRODUCTION READY for Render)
+Django settings for jjcafe project.
 """
 
 from pathlib import Path
-import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ⚠️ SECURITY (KEEP SECRET IN PRODUCTION)
 SECRET_KEY = 'django-insecure-=e4jd6k2bpjo@fyyw3uw&g^^4l@6&_1^67gkd%y^2^rsp*7fg%'
 
-# ─────────────────────────────────────────
-# DEBUG
-# ─────────────────────────────────────────
-DEBUG = False   # 👈 IMPORTANT for Render
+DEBUG = True
 
-# ─────────────────────────────────────────
-# HOSTS
-# ─────────────────────────────────────────
-ALLOWED_HOSTS = [
-    "jjcafe.onrender.com",
-    "localhost",
-    "127.0.0.1",
-]
+ALLOWED_HOSTS = ["*"]
 
 # ─────────────────────────────────────────
 # APPS
@@ -34,12 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
-    'corsheaders',
-
+    'corsheaders',          # ← CORS for Android app
     'cafe',
-
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -53,11 +38,8 @@ SITE_ID = 1
 # MIDDLEWARE
 # ─────────────────────────────────────────
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-
+    'corsheaders.middleware.CorsMiddleware',     # ← must be FIRST
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 IMPORTANT for Render
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,9 +50,9 @@ MIDDLEWARE = [
 ]
 
 # ─────────────────────────────────────────
-# CORS
+# CORS — Allow Android app to call API
 # ─────────────────────────────────────────
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True       # During development — restrict in production
 
 ROOT_URLCONF = 'jjcafe.urls'
 
@@ -97,12 +79,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'jjcafe.wsgi.application'
 
 # ─────────────────────────────────────────
-# DATABASE (FIXED FOR RENDER)
+# DATABASE (MySQL / MariaDB)
 # ─────────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',   # 👈 FIXED (NO CRASH)
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jjcafe_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_TRANS_TABLES',
+        }
     }
 }
 
@@ -122,15 +111,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ─────────────────────────────────────────
-# ALLAUTH
+# ALLAUTH SETTINGS
 # ─────────────────────────────────────────
 ACCOUNT_LOGIN_METHODS       = {"email"}
 ACCOUNT_SIGNUP_FIELDS       = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION  = "none"
-
-LOGIN_URL          = '/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL                   = '/login/'     # ← Fixed (was Login_URL)
+LOGIN_REDIRECT_URL          = '/'
+LOGOUT_REDIRECT_URL         = '/'
 
 # ─────────────────────────────────────────
 # INTERNATIONALIZATION
@@ -141,17 +129,12 @@ USE_I18N      = True
 USE_TZ        = True
 
 # ─────────────────────────────────────────
-# STATIC FILES (RENDER FIX)
+# STATIC & MEDIA
 # ─────────────────────────────────────────
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
+STATIC_URL       = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-# WhiteNoise (important)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
