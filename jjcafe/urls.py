@@ -5,17 +5,21 @@ from django.conf.urls.static import static
 from cafe import views
 
 urlpatterns = [
-    path('admin/',         admin.site.urls),
-    path('accounts/',      include('allauth.urls')),
-    path('',               include('cafe.urls')),
+    path('admin/', admin.site.urls),
 
-    # ── ANDROID API ──────────────────────────────────────────
-    path('api/branding/',    views.api_branding,    name='api_branding'),
-    path('api/menu/',        views.api_menu,        name='api_menu'),
-    path('api/contact/',     views.api_contact,     name='api_contact'),
-    path('api/story/',       views.api_story,       name='api_story'),
-    path('api/login/',       views.api_login,       name='api_login'),
-    path('api/promotions/',  views.api_promotions,  name='api_promotions'),
+    # auth
+    path('accounts/', include('allauth.urls')),
+
+    # website (welcome + menu + order portal)
+    path('', include('cafe.urls')),
+
+    # API
+    path('api/branding/', views.api_branding),
+    path('api/menu/', views.api_menu),
+    path('api/contact/', views.api_contact),
+    path('api/story/', views.api_story),
+    path('api/login/', views.api_login),
+    path('api/promotions/', views.api_promotions),
 ]
 
 if settings.DEBUG:
