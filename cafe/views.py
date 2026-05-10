@@ -9,8 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from .models import SiteBranding, Category, Item, ContactInfo, StorySection
-from .models import PaymentMethod
-from django.shortcuts import render
+
 
 # ─── PAGES ─────────────────────────────────────────────────────────────
 
@@ -238,23 +237,6 @@ def paytm_callback(request):
 
     return redirect('cart')
 
-
-# Auto-create defaults if table is empty
-if not PaymentMethod.objects.exists():
-    defaults = [
-        ('Credit / Debit Card', 'card',             '💳', 1, True),
-        ('Cash on Pickup',      'cash_on_pickup',   '💵', 2, True),
-        ('Cash on Delivery',    'cash_on_delivery', '🏠', 3, True),
-        ('Apple Pay',           'apple_pay',        '🍎', 4, False),
-        ('Google Pay',          'google_pay',       '📱', 5, False),
-    ]
-    for name, mtype, icon, order, enabled in defaults:
-        PaymentMethod.objects.get_or_create(
-            method_type=mtype,
-            defaults={'name': name, 'icon': icon, 'order': order, 'is_enabled': enabled}
-        )
-
-payment_methods = PaymentMethod.objects.filter(is_enabled=True)
 
 # ─── LOGIN ─────────────────────────────────────────────────────────────
 
