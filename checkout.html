@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --cream:#f9f4ee; --espresso:#2b1a0e; --caramel:#c8883a; --warm:#e8d5b7; }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: linear-gradient(rgba(30,15,5,0.55),rgba(30,15,5,0.55)),
+        url("{% static 'images/Background.png' %}") center/cover fixed;
+      min-height: 100vh;
+    }
+    .navbar {
+      position:sticky; top:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 36px; height:76px;
+      background:rgba(25,13,4,0.85); backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(200,136,58,0.3);
+    }
+    .nav-logo img { width:52px; height:52px; border-radius:50%; border:2px solid var(--caramel); object-fit:cover; }
+    .nav-links { flex:1; display:flex; align-items:center; justify-content:center; gap:36px; list-style:none; }
+    .nav-links a {
+      font-weight:700; font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase;
+      color:var(--warm); text-decoration:none; padding-bottom:3px;
+      border-bottom:2px solid transparent; transition:color 0.25s,border-color 0.25s;
+    }
+    .nav-links a:hover { color:var(--caramel); border-bottom-color:var(--caramel); }
+    .cart-btn {
+      display:flex; align-items:center; gap:8px;
+      background:var(--caramel); color:#fff; text-decoration:none;
+      font-weight:700; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase;
+      padding:9px 22px; border-radius:50px;
+    }
+
+    .page-content { max-width:480px; margin:60px auto 80px; padding:0 24px; }
+    h1 { font-family:'Playfair Display',serif; color:var(--cream); font-size:2.4rem; margin-bottom:32px; text-align:center; }
+
+    .checkout-card {
+      background:rgba(255,255,255,0.92); border-radius:16px; padding:32px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.18);
+    }
+    .checkout-card label {
+      display:block; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+      font-size:0.78rem; color:#7a6050; margin-bottom:14px;
+    }
+    .payment-options { display:flex; gap:14px; margin-bottom:28px; }
+    .pay-opt { flex:1; }
+    .pay-opt input { display:none; }
+    .pay-opt span {
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      border:2px solid #e0d0c0; border-radius:10px; padding:14px;
+      font-weight:700; font-size:0.88rem; cursor:pointer; color:#5a4030;
+      transition:border-color 0.2s, background 0.2s;
+    }
+    .pay-opt input:checked + span {
+      border-color:var(--caramel); background:rgba(200,136,58,0.08); color:var(--espresso);
+    }
+    .place-btn {
+      width:100%; padding:16px; border:none; border-radius:50px;
+      background:var(--espresso); color:#fff; font-family:'Lato',sans-serif;
+      font-weight:700; font-size:0.88rem; letter-spacing:0.12em; text-transform:uppercase;
+      cursor:pointer; transition:background 0.25s, transform 0.2s;
+    }
+    .place-btn:hover { background:var(--caramel); transform:translateY(-2px); }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="{% url 'home' %}">
+      <img src="{% static 'images/logo.png' %}" alt="JJCafe Logo">
+    </a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'menu' %}">Menu</a></li>
+    <li><a href="{% url 'find_us' %}">Find Us</a></li>
+    <li><a href="{% url 'our_story' %}">Our Story</a></li>
+  </ul>
+
+  <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
+</nav>
+
+  <div class="page-content">
+    <h1>Checkout</h1>
+    <div class="checkout-card">
+      <form method="POST">
+        {% csrf_token %}
+        <label>Choose Payment Method</label>
+        <div class="payment-options">
+          <label class="pay-opt">
+            <input type="radio" name="payment" value="cash" required>
+            <span>💵 Cash</span>
+          </label>
+          <label class="pay-opt">
+            <input type="radio" name="payment" value="gpay">
+            <span>📱 Google Pay</span>
+          </label>
+        </div>
+        <button type="submit" class="place-btn">Place Order</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

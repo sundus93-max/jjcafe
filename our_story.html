@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}JJCafe — Our Story{% endblock %}
+
+{% block extra_css %}
+  .story-wrap {
+    max-width: 760px; margin: 48px auto 80px; padding: 0 24px;
+  }
+  .story-section {
+    background: var(--card-bg); border-radius: 18px;
+    padding: 36px 38px; margin-bottom: 24px;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.14);
+    animation: fadeUp 0.5s ease both;
+  }
+  .story-section:nth-child(1){animation-delay:.05s}
+  .story-section:nth-child(2){animation-delay:.12s}
+  .story-section:nth-child(3){animation-delay:.18s}
+  .story-section:nth-child(4){animation-delay:.24s}
+
+  .story-section h2 {
+    font-family:'Playfair Display',serif; font-size:1.55rem;
+    color:var(--espresso); margin-bottom:14px;
+    padding-bottom:12px; border-bottom:2px solid #f0e0cc;
+  }
+  .story-section p {
+    font-size:0.96rem; color:#4a3520; line-height:1.8;
+  }
+  .story-section img {
+    width:100%; border-radius:12px; margin-top:20px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  .empty-story {
+    text-align:center; color:var(--warm); padding:80px 20px;
+  }
+  .empty-story h2 { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--cream); margin-bottom:12px; }
+  .empty-story p  { font-size:0.9rem; opacity:0.7; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+{% endblock %}
+
+{% block content %}
+{% with active='our_story' %}
+  <header class="page-header">
+    <h1>Our Story</h1>
+    <p>Where we came from, and where we're going</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="story-wrap">
+    {% for section in sections %}
+    <div class="story-section">
+      {% if section.heading %}<h2>{{ section.heading }}</h2>{% endif %}
+      <p>{{ section.body }}</p>
+      {% if section.image_url %}<img src="{{ section.image_url }}" alt="{{ section.heading }}">{% endif %}
+    </div>
+    {% empty %}
+    <div class="empty-story">
+      <h2>Story Coming Soon</h2>
+      <p>Add sections via Admin → Our Story Sections.</p>
+    </div>
+    {% endfor %}
+  </div>
+{% endwith %}
+{% endblock %}
