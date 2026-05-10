@@ -1,0 +1,45 @@
+import django.contrib.auth.models
+from django.db import migrations
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('auth', '0012_alter_user_first_name_max_length'),
+        ('cafe', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='StaffUserProxy',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Staff Member',
+                'verbose_name_plural': 'Staff Members',
+                'proxy': True,
+                'indexes': [],
+                'constraints': [],
+            },
+            bases=('auth.user',),
+            managers=[
+                ('objects', django.contrib.auth.models.UserManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CustomerUserProxy',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Customer Account',
+                'verbose_name_plural': 'Customer Accounts',
+                'proxy': True,
+                'indexes': [],
+                'constraints': [],
+            },
+            bases=('auth.user',),
+            managers=[
+                ('objects', django.contrib.auth.models.UserManager()),
+            ],
+        ),
+    ]
