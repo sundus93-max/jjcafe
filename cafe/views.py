@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from django.conf import settings
 from .models import SiteBranding, Category, Item, ContactInfo, StorySection
 from .models import PaymentMethod
-
+from django.shortcuts import render
 
 # ─── PAGES ─────────────────────────────────────────────────────────────
 
