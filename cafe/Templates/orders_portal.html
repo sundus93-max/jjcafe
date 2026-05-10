@@ -94,9 +94,13 @@
     </div>
   </div>
   <div class="topbar-right">
-    <a href="{% url 'home' %}" class="btn-sm btn-outline">🌐 Website</a>
+    <a href="/" class="btn-sm btn-outline">🌐 Website</a>
     <a href="{% url 'admin:index' %}" class="btn-sm btn-outline">⚙️ Admin</a>
-    <a href="{% url 'account_logout' %}" class="btn-sm btn-primary">Logout</a>
+    <a href="{% url 'finance_report' %}" class="btn-sm btn-outline">📊 Reports</a>
+    <form method="POST" action="{% url 'portal_logout' %}" style="display:inline">
+      {% csrf_token %}
+      <button type="submit" class="btn-sm btn-primary">Logout Portal</button>
+    </form>
   </div>
 </div>
 

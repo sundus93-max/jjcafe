@@ -248,6 +248,25 @@ class OrderAdmin(admin.ModelAdmin):
         return format_html('<b style="color:#c8883a">AED {}</b>', obj.total)
     total_display.short_description = "Total"
 
+    def save_model(self, request, obj, form, change):
+        if change and 'status' in form.changed_data and obj.user:
+            from .models import OrderNotification
+            status_msgs = {
+                'paid':      '✅ Your order #{} has been paid and confirmed!',
+                'preparing': '👨‍🍳 Your order #{} is now being prepared.',
+                'ready':     '🎉 Your order #{} is ready for pickup!',
+                'completed': '✅ Your order #{} has been completed. Thank you!',
+                'cancelled': '❌ Your order #{} has been cancelled.',
+            }
+            msg_template = status_msgs.get(obj.status)
+            if msg_template:
+                OrderNotification.objects.create(
+                    user=obj.user,
+                    order=obj,
+                    message=msg_template.format(obj.id)
+                )
+        super().save_model(request, obj, form, change)
+
 
 # ══════════════════════════════════════════════════════════════
 #  5. PROMOTIONS
@@ -369,3 +388,25 @@ class PaymentMethodAdmin(admin.ModelAdmin):
                     defaults={'name': name, 'icon': icon, 'order': order, 'is_enabled': enabled}
                 )
         return super().get_queryset(request)
+
+
+# ══════════════════════════════════════════════════════════════
+#  ROLE MANAGEMENT  (#7)
+# ══════════════════════════════════════════════════════════════
+# Re-register Group with better UI
+from django.contrib.auth.models import Group
+from django.contrib.auth.admin import GroupAdmin
+
+admin.site.register(Group, GroupAdmin)
+
+
+# ══════════════════════════════════════════════════════════════
+#  ORDER NOTIFICATIONS
+# ══════════════════════════════════════════════════════════════
+from .models import OrderNotification
+
+@admin.register(OrderNotification)
+class OrderNotificationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'message', 'is_read', 'created_at')
+    list_filter  = ('is_read',)
+    ordering     = ('-created_at',)

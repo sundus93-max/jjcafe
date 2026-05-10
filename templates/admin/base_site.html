@@ -1,104 +1,81 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}{{ branding.app_name }} Admin{% endblock %}
-
-{% block branding %}
-<div id="site-name" style="display:flex;align-items:center;gap:12px;">
-  {% if branding.logo_url %}
-    <img src="{{ branding.logo_url }}"
-         style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.3);"
-         alt="{{ branding.app_name }}">
-  {% else %}
-    <img src="{% static 'images/logo.png' %}"
-         style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.3);"
-         alt="{{ branding.app_name }}">
-  {% endif %}
-  <a href="{% url 'admin:index' %}" style="color:#fff;text-decoration:none;font-size:1.1rem;font-weight:700;letter-spacing:0.05em;">
-    ☕ {{ branding.app_name }} Admin
-  </a>
-</div>
-{% endblock %}
-
 {% block extrastyle %}
 {{ block.super }}
 <style>
-  /* ── Variables from admin branding ── */
   :root {
-    --primary:   {{ branding.primary_color }};
-    --secondary: {{ branding.secondary_color }};
+    --admin-bg: {% if branding.background_url %}"{{ branding.background_url }}"{% else %}"{% static 'images/Background.png' %}"{% endif %};
   }
-
-  /* ── Top header bar ── */
   #header {
-    background: linear-gradient(135deg, {{ branding.secondary_color }}, #1a0a03) !important;
-    {% if branding.background_url %}
-    background: linear-gradient(rgba(20,10,3,0.88), rgba(20,10,3,0.92)),
-                url("{{ branding.background_url }}") center/cover !important;
-    {% endif %}
-    border-bottom: 3px solid {{ branding.primary_color }} !important;
-    padding: 10px 20px !important;
+    background: linear-gradient(rgba(20,10,3,0.92), rgba(20,10,3,0.92)),
+      url({% if branding.background_url %}{{ branding.background_url }}{% else %}{% static 'images/Background.png' %}{% endif %}) center/cover !important;
+    color: #c8883a !important;
+    border-bottom: 2px solid rgba(200,136,58,0.4);
+  }
+  #header a:link, #header a:visited { color: #c8883a !important; }
+  #branding h1 { color: #c8883a !important; font-size: 1.3rem; }
+  #branding h1 a { color: #c8883a !important; }
+
+  /* Admin logo in header */
+  #branding {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #branding::before {
+    content: '';
+    display: block;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: url({% if branding.logo_url %}{{ branding.logo_url }}{% else %}{% static 'images/logo.png' %}{% endif %}) center/cover;
+    border: 2px solid #c8883a;
+    flex-shrink: 0;
   }
 
-  /* ── Nav links color ── */
-  #user-tools a, #user-tools { color: rgba(255,255,255,0.85) !important; }
-  #user-tools a:hover { color: {{ branding.primary_color }} !important; }
-
-  /* ── Sidebar / nav module headers ── */
-  .module h2, .module caption, .inline-group h2 {
-    background: {{ branding.secondary_color }} !important;
-    color: #fff !important;
+  /* Sidebar */
+  #nav-sidebar { background: rgba(20,10,3,0.95) !important; border-right: 1px solid rgba(200,136,58,0.2); }
+  .module h2, .module caption, .inline-group h2 { background: #c8883a !important; }
+  a:link { color: #c8883a; }
+  .button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: #c8883a !important; border-color: #a86d28 !important;
   }
+  .button:hover { background: #a86d28 !important; }
 
-  /* ── App list section headers ── */
-  #nav-sidebar .current-app .section:link,
-  #nav-sidebar .current-app .section:visited {
-    color: {{ branding.primary_color }} !important;
+  /* Full page background */
+  body {
+    background: linear-gradient(rgba(20,10,3,0.75), rgba(20,10,3,0.75)),
+      url({% if branding.background_url %}{{ branding.background_url }}{% else %}{% static 'images/Background.png' %}{% endif %}) center/cover fixed !important;
+    background-attachment: fixed !important;
   }
-
-  /* ── Buttons ── */
-  .button, input[type=submit], input[type=button],
-  .submit-row input, a.button {
-    background: {{ branding.primary_color }} !important;
-    border-color: {{ branding.primary_color }} !important;
-    color: #fff !important;
+  .main { background: transparent !important; }
+  #content { background: rgba(255,255,255,0.05) !important; border-radius: 10px; }
+  .module { background: rgba(255,255,255,0.07) !important; border: 1px solid rgba(200,136,58,0.2) !important; border-radius: 8px; }
+  #content-main { color: #e8d5b7; }
+  h1, h2, h3 { color: #f9f4ee !important; }
+  td, th { color: #e8d5b7 !important; }
+  .row1 { background: rgba(255,255,255,0.04) !important; }
+  .row2 { background: rgba(255,255,255,0.02) !important; }
+  select, input[type=text], input[type=password], input[type=email], textarea {
+    background: rgba(255,255,255,0.1) !important;
+    color: #f9f4ee !important;
+    border: 1px solid rgba(200,136,58,0.3) !important;
+    border-radius: 6px !important;
   }
-  .button:hover, input[type=submit]:hover {
-    background: {{ branding.secondary_color }} !important;
-    border-color: {{ branding.secondary_color }} !important;
-  }
-  .button.default, input[type=submit].default {
-    background: {{ branding.secondary_color }} !important;
-  }
-
-  /* ── Links ── */
-  a:link, a:visited { color: {{ branding.primary_color }} !important; }
-  a:hover { color: {{ branding.secondary_color }} !important; }
-
-  /* ── Active nav item ── */
-  #nav-sidebar .selected { border-left-color: {{ branding.primary_color }} !important; }
-
-  /* ── Breadcrumbs ── */
-  div.breadcrumbs {
-    background: {{ branding.secondary_color }} !important;
-    color: rgba(255,255,255,0.7) !important;
-  }
-  div.breadcrumbs a { color: {{ branding.primary_color }} !important; }
-
-  /* ── Page title ── */
-  #content h1 { color: {{ branding.secondary_color }} !important; }
-
-  /* ── Row hover in list view ── */
-  #result_list tbody tr:hover { background: rgba(200,136,58,0.06) !important; }
-
-  /* ── Save buttons row ── */
-  .submit-row { background: #f9f4ee !important; border-top: 2px solid {{ branding.primary_color }} !important; }
-
-  /* ── Paginator ── */
-  .paginator a:link, .paginator a:visited { color: {{ branding.primary_color }} !important; }
-
-  /* ── Logo pulse animation ── */
-  #site-name img { transition: transform 0.2s; }
-  #site-name img:hover { transform: scale(1.08); }
 </style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <a href="{% url 'admin:index' %}">☕ {{ branding.app_name }} Admin</a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<div style="background:rgba(0,0,0,0.3);padding:6px 20px;display:flex;gap:16px;font-size:0.78rem;border-bottom:1px solid rgba(200,136,58,0.2)">
+  <a href="/" style="color:#c8883a;text-decoration:none">🌐 Website</a>
+  <a href="/orders/" style="color:#c8883a;text-decoration:none">📋 Order Portal</a>
+  <span style="color:#7a6050;margin-left:auto">{{ user.email }}</span>
+</div>
 {% endblock %}

@@ -2,19 +2,32 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.home),
-    path("menu/", views.menu),
-    path("cart/", views.cart),
+    # ── Pages ─────────────────────────────────────────────────
+    path('',                                    views.home,                name='home'),
+    path('menu/',                               views.menu,                name='menu'),
+    path('find-us/',                            views.find_us,             name='find_us'),
+    path('our-story/',                          views.our_story,           name='our_story'),
+    path('login/',                              views.login_view,          name='login'),
+    path('profile/',                            views.profile,             name='profile'),
 
-    path("add/<int:item_id>/", views.add_to_cart),
-    path("remove/<int:item_id>/", views.remove_from_cart),
+    # ── Cart & Checkout ───────────────────────────────────────
+    path('cart/',                               views.cart,                name='cart'),
+    path('checkout/',                           views.checkout,            name='checkout'),
+    path('add-to-cart/<int:item_id>/',          views.add_to_cart,         name='add_to_cart'),
+    path('remove-from-cart/<int:item_id>/',     views.remove_from_cart,    name='remove_from_cart'),
 
-    path("checkout/", views.checkout),
+    # ── Independent Logouts ───────────────────────────────────
+    path('website-logout/',                     views.website_logout,      name='website_logout'),
+    path('portal-logout/',                      views.portal_logout,       name='portal_logout'),
 
-    path("login/", views.login_view),
-    path("profile/", views.profile),
+    # ── Notifications ─────────────────────────────────────────
+    path('notifications/',                      views.notifications_api,   name='notifications_api'),
 
-    # ORDER PORTAL
-    path("orders/", views.orders_portal),
-    path("orders/update/<int:order_id>/", views.order_update_status),
+    # ── Order Portal ──────────────────────────────────────────
+    path('orders/',                             views.orders_portal,       name='orders_portal'),
+    path('orders/update-status/<int:order_id>/', views.order_update_status, name='order_update_status'),
+
+    # ── Reports ───────────────────────────────────────────────
+    path('reports/',                            views.finance_report,      name='finance_report'),
+    path('reports/export-csv/',                 views.export_orders_csv,   name='export_orders_csv'),
 ]

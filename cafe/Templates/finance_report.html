@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Finance Report</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--caramel:#c8883a;--cream:#f9f4ee;--muted:#7a6050;--warm:#e8d5b7}
+    body{font-family:'Segoe UI',sans-serif;background:#1a0e05;color:var(--cream);min-height:100vh}
+    .topbar{background:rgba(25,13,4,0.98);border-bottom:1px solid rgba(200,136,58,0.3);padding:0 32px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .topbar h1{font-size:1.2rem;color:var(--caramel)}
+    .btn{padding:8px 18px;border-radius:30px;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;transition:all 0.2s}
+    .btn-primary{background:var(--caramel);color:#fff}
+    .btn-outline{background:transparent;color:var(--warm);border:1px solid rgba(200,136,58,0.4)}
+    .main{padding:28px 32px}
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px}
+    .stat{background:rgba(255,255,255,0.06);border:1px solid rgba(200,136,58,0.2);border-radius:14px;padding:22px;text-align:center}
+    .stat-num{font-size:2rem;font-weight:700;color:var(--caramel)}
+    .stat-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+    .card{background:rgba(255,255,255,0.05);border:1px solid rgba(200,136,58,0.15);border-radius:14px;padding:22px}
+    .card h2{font-size:1rem;color:var(--cream);margin-bottom:16px;font-weight:600}
+    table{width:100%;border-collapse:collapse}
+    th{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;padding:8px 0;text-align:left;border-bottom:1px solid rgba(200,136,58,0.2)}
+    td{padding:10px 0;font-size:0.88rem;color:var(--warm);border-bottom:1px solid rgba(255,255,255,0.04)}
+    .amount{color:var(--caramel);font-weight:700}
+    .export-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+<div class="topbar">
+  <h1>📊 Finance & Reports</h1>
+  <div style="display:flex;gap:10px">
+    <a href="{% url 'orders_portal' %}" class="btn btn-outline">← Orders</a>
+    <a href="{% url 'admin:index' %}" class="btn btn-outline">⚙️ Admin</a>
+  </div>
+</div>
+<div class="main">
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">AED {{ total_revenue|floatformat:2 }}</div><div class="stat-label">Total Revenue</div></div>
+    <div class="stat"><div class="stat-num">{{ total_orders }}</div><div class="stat-label">Total Orders</div></div>
+    <div class="stat"><div class="stat-num">AED {{ today_revenue|floatformat:2 }}</div><div class="stat-label">Today's Revenue</div></div>
+  </div>
+
+  <!-- Export buttons -->
+  <div class="export-row">
+    <a href="{% url 'export_orders_csv' %}?status=all" class="btn btn-primary">⬇️ Export All Orders CSV</a>
+    <a href="{% url 'export_orders_csv' %}?status=completed" class="btn btn-outline">⬇️ Completed Only</a>
+    <a href="{% url 'export_orders_csv' %}?status=pending" class="btn btn-outline">⬇️ Pending Only</a>
+    <a href="{% url 'export_orders_csv' %}?status=cancelled" class="btn btn-outline">⬇️ Cancelled Only</a>
+  </div>
+
+  <div class="grid-2">
+    <!-- Revenue chart -->
+    <div class="card">
+      <h2>📈 Last 7 Days Revenue</h2>
+      <canvas id="revenueChart" height="180"></canvas>
+    </div>
+
+    <!-- By payment method -->
+    <div class="card">
+      <h2>💳 Revenue by Payment Method</h2>
+      <table>
+        <thead><tr><th>Method</th><th>Orders</th><th>Revenue</th></tr></thead>
+        <tbody>
+          {% for method, data in by_payment.items %}
+          <tr>
+            <td>{{ method|title }}</td>
+            <td>{{ data.count }}</td>
+            <td class="amount">AED {{ data.total|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- By status -->
+  <div class="card">
+    <h2>📋 Orders by Status</h2>
+    <table>
+      <thead><tr><th>Status</th><th>Count</th><th>Revenue</th></tr></thead>
+      <tbody>
+        {% for status, data in by_status.items %}
+        <tr>
+          <td>{{ status }}</td>
+          <td>{{ data.count }}</td>
+          <td class="amount">AED {{ data.total|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const daily = {{ daily|safe }};
+new Chart(document.getElementById('revenueChart'), {
+  type: 'bar',
+  data: {
+    labels: daily.map(d => d.date),
+    datasets: [{
+      label: 'Revenue (AED)',
+      data: daily.map(d => d.revenue),
+      backgroundColor: 'rgba(200,136,58,0.6)',
+      borderColor: '#c8883a',
+      borderWidth: 2,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: '#e8d5b7' } } },
+    scales: {
+      x: { ticks: { color: '#7a6050' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+      y: { ticks: { color: '#7a6050' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
