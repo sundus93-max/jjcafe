@@ -25,15 +25,18 @@ CSRF_TRUSTED_ORIGINS = [
     "https://jjcafe.onrender.com",
 ]
 
-# IMPORTANT FOR RENDER HTTPS
+# IMPORTANT FOR RENDER
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
+SECURE_SSL_REDIRECT = True
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
+
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
 # =====================================================
 # INSTALLED APPS
@@ -134,7 +137,7 @@ else:
     }
 
 # =====================================================
-# AUTH
+# AUTHENTICATION
 # =====================================================
 
 AUTHENTICATION_BACKENDS = [
@@ -147,7 +150,7 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 # =====================================================
-# ALLAUTH (CLEAN FIX)
+# ALLAUTH (CLEAN & FIXED)
 # =====================================================
 
 ACCOUNT_LOGIN_METHODS = {"email"}
