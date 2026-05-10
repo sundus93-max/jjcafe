@@ -1,0 +1,376 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream:    #f9f4ee;
+      --espresso: #2b1a0e;
+      --caramel:  #c8883a;
+      --warm:     #e8d5b7;
+      --muted:    #7a6050;
+      --card-bg:  rgba(255,255,255,0.92);
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background:
+        linear-gradient(rgba(30,15,5,0.60), rgba(30,15,5,0.60)),
+        url("{% if branding.background_url %}{{ branding.background_url }}{% else %}{% static 'images/Background.png' %}{% endif %}") center/cover fixed;
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 76px;
+      background: rgba(22,11,3,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(200,136,58,0.3);
+    }
+    .nav-logo img {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2px solid var(--caramel); object-fit: cover;
+    }
+    .nav-links { flex:1; display:flex; justify-content:center; gap:38px; list-style:none; }
+    .nav-links a {
+      font-weight:700; font-size:0.78rem; letter-spacing:0.16em;
+      text-transform:uppercase; color:var(--warm); text-decoration:none;
+      padding-bottom:4px; border-bottom:2px solid transparent; transition:0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color:var(--caramel); border-bottom-color:var(--caramel); }
+    .cart-btn {
+      background:var(--caramel); color:white; padding:9px 22px;
+      border-radius:50px; text-decoration:none; font-weight:700; font-size:0.78rem; transition:0.2s;
+    }
+    .cart-btn:hover { background:#a86d28; }
+    .nav-login-btn {
+      background:transparent; color:var(--caramel); border:2px solid var(--caramel);
+      padding:8px 20px; border-radius:50px; text-decoration:none;
+      font-weight:700; font-size:0.78rem; text-transform:uppercase; margin-right:10px; transition:0.2s;
+    }
+    .nav-login-btn:hover { background:var(--caramel); color:white; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      text-align: center; padding: 56px 20px 10px;
+    }
+    .page-header h1 {
+      font-family:'Playfair Display', serif;
+      font-size: clamp(2.2rem,5vw,3.4rem);
+      color: var(--cream);
+    }
+    .page-header p { color: var(--warm); margin-top:8px; font-size:1rem; opacity:0.8; }
+
+    /* ── CATEGORY TABS ── */
+    .cat-tabs {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      max-width: 1100px; margin: 30px auto 0; padding: 0 20px;
+    }
+    .cat-tab {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(200,136,58,0.2);
+      color: var(--warm); border-radius: 50px;
+      padding: 9px 22px; cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700; font-size: 0.78rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .cat-tab img {
+      width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
+    }
+    .cat-tab:hover { border-color: var(--caramel); color: var(--caramel); }
+    .cat-tab.active {
+      background: var(--caramel); color: #fff; border-color: var(--caramel);
+    }
+    .cat-tab.active:hover { background: #a86d28; }
+
+    /* ── CATEGORY SECTION ── */
+    .category-section {
+      max-width: 1100px; margin: 36px auto 0; padding: 0 20px;
+      display: none; /* hidden by default — JS shows active one */
+    }
+    .category-section.active { display: block; }
+
+    .cat-section-header {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+    }
+    .cat-section-header img {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 2px solid var(--caramel); object-fit: cover;
+    }
+    .cat-section-header h2 {
+      font-family:'Playfair Display', serif;
+      font-size: 1.8rem; color: var(--cream);
+    }
+    .cat-section-header p { color: var(--warm); font-size:0.88rem; margin-top:3px; }
+
+    /* ── ITEM GRID ── */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 50px;
+    }
+
+    .menu-card {
+      background: var(--card-bg);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .menu-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+    }
+
+    .card-img {
+      position: relative; height: 190px; background: #e8d5b7;
+      overflow: hidden;
+    }
+    .card-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .menu-card:hover .card-img img { transform: scale(1.05); }
+    .card-img .no-image {
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; font-size: 3rem; color: var(--muted);
+    }
+
+    .card-body { padding: 16px; }
+    .card-body h3 {
+      font-family:'Playfair Display', serif;
+      font-size: 1.05rem; color: var(--espresso); margin-bottom: 6px;
+    }
+    .card-body p {
+      font-size: 0.83rem; color: var(--muted); line-height: 1.5;
+      min-height: 38px;
+    }
+
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 14px;
+    }
+    .price {
+      font-weight: 700; font-size: 1.1rem; color: var(--caramel);
+    }
+    .price span { font-size: 0.72rem; font-weight: 400; color: var(--muted); }
+
+    .add-btn {
+      background: var(--espresso); color: #fff;
+      padding: 8px 18px; border-radius: 50px;
+      text-decoration: none; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.06em; transition: 0.2s;
+    }
+    .add-btn:hover { background: var(--caramel); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--warm); opacity: 0.6;
+    }
+    .empty-state .icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+    footer { text-align:center; padding:28px; color:rgba(255,255,255,0.25); font-size:0.76rem; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="{% url 'home' %}"><img src="{% if branding.logo_url %}{{ branding.logo_url }}{% else %}{% static 'images/logo.png' %}{% endif %}" alt="JJCafe"></a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'menu' %}" class="active">Menu</a></li>
+    <li><a href="{% url 'find_us' %}">Find Us</a></li>
+    <li><a href="{% url 'our_story' %}">Our Story</a></li>
+  </ul>
+  {% if user.is_authenticated %}
+    <a href="{% url 'account_logout' %}" class="nav-login-btn">👤 {{ user.email|truncatechars:14 }}</a>
+  {% else %}
+    <a href="{% url 'login' %}" class="nav-login-btn">👤 Login</a>
+  {% endif %}
+  <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <h1>Our Menu</h1>
+  <p>Fresh ingredients, crafted with love</p>
+</header>
+
+<!-- CATEGORY TABS -->
+<div class="cat-tabs" id="catTabs">
+  {% for cat in categories %}
+  <button class="cat-tab {% if forloop.first %}active{% endif %}"
+          onclick="showCategory('cat-{{ cat.id }}')"
+          id="tab-cat-{{ cat.id }}">
+    {% if cat.image %}<img src="{{ cat.image.url }}" alt="{{ cat.name }}">{% endif %}
+    {{ cat.name }}
+  </button>
+  {% endfor %}
+  {% if uncategorised %}
+  <button class="cat-tab {% if not categories %}active{% endif %}"
+          onclick="showCategory('cat-other')"
+          id="tab-cat-other">
+    Other
+  </button>
+  {% endif %}
+</div>
+
+<!-- CATEGORY SECTIONS -->
+{% for cat in categories %}
+<section class="category-section {% if forloop.first %}active{% endif %}" id="cat-{{ cat.id }}">
+
+  <div class="cat-section-header">
+    {% if cat.image %}<img src="{{ cat.image.url }}" alt="{{ cat.name }}">{% endif %}
+    <div>
+      <h2>{{ cat.name }}</h2>
+      {% if cat.description %}<p>{{ cat.description }}</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    {% for item in cat.items.all %}
+    <div class="menu-card">
+      <div class="card-img">
+        {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.name }}">
+        {% else %}
+          <div class="no-image">☕</div>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description }}</p>
+        <div class="card-footer">
+          <div class="price">AED {{ item.price }} <span>per item</span></div>
+          <button class="add-btn" onclick="openModal({{ item.id }}, '{{ item.name|escapejs }}', '{{ item.price }}')">+ Add</button>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <span class="icon">🍽</span>
+      <p>No items in this category yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+{% if uncategorised %}
+<section class="category-section {% if not categories %}active{% endif %}" id="cat-other">
+  <div class="cat-section-header">
+    <div><h2>Other Items</h2></div>
+  </div>
+  <div class="menu-grid">
+    {% for item in uncategorised %}
+    <div class="menu-card">
+      <div class="card-img">
+        {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}">
+        {% else %}<div class="no-image">☕</div>{% endif %}
+      </div>
+      <div class="card-body">
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description }}</p>
+        <div class="card-footer">
+          <div class="price">AED {{ item.price }}</div>
+          <button class="add-btn" onclick="openModal({{ item.id }}, '{{ item.name|escapejs }}', '{{ item.price }}')">+ Add</button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if not categories and not uncategorised %}
+<div class="empty-state" style="margin-top:60px">
+  <span class="icon">☕</span>
+  <p>Menu coming soon. Check back later!</p>
+</div>
+{% endif %}
+
+<footer>© JJCafe — All rights reserved</footer>
+
+<!-- QUANTITY MODAL -->
+<div id="qty-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:rgba(43,26,14,0.97);border:1px solid rgba(200,136,58,0.4);border-radius:20px;padding:36px 32px;width:320px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.6);">
+    <p style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:#7a6050;margin-bottom:6px;">Adding to cart</p>
+    <h3 id="modal-item-name" style="font-family:'Playfair Display',serif;color:#f9f4ee;font-size:1.3rem;margin-bottom:4px;"></h3>
+    <p id="modal-item-price" style="color:#c8883a;font-weight:700;margin-bottom:24px;font-size:0.95rem;"></p>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:28px;">
+      <button onclick="changeQty(-1)" style="width:40px;height:40px;border-radius:50%;border:2px solid rgba(200,136,58,0.5);background:transparent;color:#f9f4ee;font-size:1.3rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(200,136,58,0.2)'" onmouseout="this.style.background='transparent'">−</button>
+      <span id="modal-qty" style="font-family:'Playfair Display',serif;font-size:2rem;color:#f9f4ee;min-width:40px;">1</span>
+      <button onclick="changeQty(1)" style="width:40px;height:40px;border-radius:50%;border:2px solid rgba(200,136,58,0.5);background:transparent;color:#f9f4ee;font-size:1.3rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(200,136,58,0.2)'" onmouseout="this.style.background='transparent'">+</button>
+    </div>
+
+    <p id="modal-subtotal" style="color:#e8d5b7;font-size:0.9rem;margin-bottom:24px;"></p>
+
+    <form id="add-cart-form" method="POST" action="">
+      {% csrf_token %}
+      <input type="hidden" name="quantity" id="form-qty" value="1">
+      <button type="submit" style="width:100%;background:#c8883a;color:#fff;border:none;border-radius:50px;padding:14px;font-weight:700;font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;transition:background 0.2s;" onmouseover="this.style.background='#a86d28'" onmouseout="this.style.background='#c8883a'">Add to Cart</button>
+    </form>
+    <button onclick="closeModal()" style="background:transparent;border:none;color:#7a6050;font-size:0.85rem;cursor:pointer;letter-spacing:0.08em;">Cancel</button>
+  </div>
+</div>
+
+<script>
+  var currentPrice = 0;
+  var currentQty   = 1;
+
+  function openModal(itemId, itemName, itemPrice) {
+    currentPrice = parseFloat(itemPrice);
+    currentQty   = 1;
+    document.getElementById('modal-item-name').textContent  = itemName;
+    document.getElementById('modal-item-price').textContent = 'AED ' + parseFloat(itemPrice).toFixed(2) + ' per item';
+    document.getElementById('modal-qty').textContent        = '1';
+    document.getElementById('form-qty').value               = '1';
+    document.getElementById('modal-subtotal').textContent   = 'Subtotal: AED ' + currentPrice.toFixed(2);
+    document.getElementById('add-cart-form').action         = '/add-to-cart/' + itemId + '/';
+    var modal = document.getElementById('qty-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('qty-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function changeQty(delta) {
+    currentQty = Math.max(1, currentQty + delta);
+    document.getElementById('modal-qty').textContent  = currentQty;
+    document.getElementById('form-qty').value         = currentQty;
+    document.getElementById('modal-subtotal').textContent = 'Subtotal: AED ' + (currentPrice * currentQty).toFixed(2);
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('qty-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  function showCategory(id) {
+    document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+
+</body>
+</html>

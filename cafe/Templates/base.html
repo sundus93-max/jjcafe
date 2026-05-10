@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}JJCafe{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream:   #f9f4ee;
+      --espresso:#2b1a0e;
+      --caramel: #c8883a;
+      --warm:    #e8d5b7;
+      --muted:   #7a6050;
+    }
+    body {
+      font-family: 'Lato', sans-serif;
+      background:
+        linear-gradient(rgba(30,15,5,0.55), rgba(30,15,5,0.55)),
+        url("{% if branding.background_url %}{{ branding.background_url }}{% else %}{% static 'images/Background.png' %}{% endif %}") center/cover fixed;
+      min-height: 100vh;
+      color: var(--espresso);
+    }
+    /* ─── NAVBAR ───────────────────────── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 76px;
+      background: rgba(22, 11, 3, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(200,136,58,0.3);
+    }
+    .nav-logo img {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--caramel);
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .nav-logo img:hover {
+      transform: scale(1.08) rotate(3deg);
+    }
+    .nav-links {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 38px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--warm);
+      text-decoration: none;
+      padding-bottom: 4px;
+      border-bottom: 2px solid transparent;
+      transition: 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--caramel);
+      border-bottom-color: var(--caramel);
+    }
+    /* ─── LOGIN BTN ────────────────────── */
+    .nav-login-btn {
+      background: transparent;
+      color: var(--caramel);
+      border: 2px solid var(--caramel);
+      padding: 8px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-right: 10px;
+      transition: 0.2s;
+    }
+    .nav-login-btn:hover {
+      background: var(--caramel);
+      color: white;
+      transform: translateY(-1px);
+    }
+    /* ─── CART BTN ─────────────────────── */
+    .cart-btn {
+      background: var(--caramel);
+      color: white;
+      padding: 9px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.78rem;
+      transition: 0.2s;
+    }
+    .cart-btn:hover {
+      background: #a86d28;
+      transform: translateY(-1px);
+    }
+    /* ─── HEADER ───────────────────────── */
+    .page-header {
+      text-align: center;
+      padding: 60px 20px 24px;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      color: var(--cream);
+    }
+    footer {
+      text-align: center;
+      padding: 28px;
+      color: rgba(255,255,255,0.28);
+      font-size: 0.76rem;
+    }
+    {% block extra_css %}{% endblock %}
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <!-- LOGO -->
+    <div class="nav-logo">
+      <a href="{% url 'home' %}">
+        <img src="{% if branding.logo_url %}{{ branding.logo_url }}{% else %}{% static 'images/logo.png' %}{% endif %}" alt="{{ branding.app_name }}">
+      </a>
+    </div>
+    <!-- MENU -->
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}" {% if active == 'home' %}class="active"{% endif %}>Home</a></li>
+      <li><a href="{% url 'menu' %}" {% if active == 'menu' %}class="active"{% endif %}>Menu</a></li>
+      <li><a href="{% url 'find_us' %}" {% if active == 'find_us' %}class="active"{% endif %}>Find Us</a></li>
+      <li><a href="{% url 'our_story' %}" {% if active == 'our_story' %}class="active"{% endif %}>Our Story</a></li>
+    </ul>
+    <!-- LOGIN / LOGOUT / PROFILE -->
+    {% if user.is_authenticated %}
+    <div style="display:flex;align-items:center;gap:8px">
+      <a href="{% url 'profile' %}" class="nav-login-btn">👤 {{ user.email|truncatechars:14 }}</a>
+      <a href="{% url 'account_logout' %}" class="nav-login-btn" style="font-size:0.72rem;padding:8px 12px;opacity:0.7">Sign Out</a>
+    </div>
+    {% else %}
+      <a href="{% url 'account_login' %}" class="nav-login-btn">👤 Login</a>
+    {% endif %}
+    <!-- CART -->
+    <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
+  </nav>
+  <!-- PROMOTIONS BANNER -->
+  {% for promo in site_promotions %}
+  {% if promo.promo_type == 'text' %}
+  <div style="background:linear-gradient(90deg,#2b1a0e,#c8883a,#2b1a0e);color:#fff;text-align:center;padding:10px 20px;font-size:0.88rem;font-weight:700;letter-spacing:0.08em">
+    📢 {{ promo.title }}: {{ promo.text }}
+  </div>
+  {% elif promo.promo_type == 'image' and promo.image %}
+  <div style="text-align:center;background:#1a0e05">
+    <img src="{{ promo.image.url }}" style="max-width:100%;max-height:120px;object-fit:cover;width:100%" alt="{{ promo.title }}">
+  </div>
+  {% elif promo.promo_type == 'video' and promo.video_url %}
+  <div style="text-align:center;background:#1a0e05;padding:10px">
+    <iframe src="{{ promo.video_url }}" width="100%" height="120" frameborder="0" allowfullscreen style="max-width:900px"></iframe>
+  </div>
+  {% endif %}
+  {% endfor %}
+  <!-- PAGE CONTENT -->
+  {% block content %}{% endblock %}
+  <!-- FOOTER -->
+  <footer>© JJCafe — All rights reserved</footer>
+</body>
+</html>

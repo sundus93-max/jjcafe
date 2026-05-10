@@ -1,0 +1,104 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ branding.app_name }} Admin{% endblock %}
+
+{% block branding %}
+<div id="site-name" style="display:flex;align-items:center;gap:12px;">
+  {% if branding.logo_url %}
+    <img src="{{ branding.logo_url }}"
+         style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.3);"
+         alt="{{ branding.app_name }}">
+  {% else %}
+    <img src="{% static 'images/logo.png' %}"
+         style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.3);"
+         alt="{{ branding.app_name }}">
+  {% endif %}
+  <a href="{% url 'admin:index' %}" style="color:#fff;text-decoration:none;font-size:1.1rem;font-weight:700;letter-spacing:0.05em;">
+    ☕ {{ branding.app_name }} Admin
+  </a>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  /* ── Variables from admin branding ── */
+  :root {
+    --primary:   {{ branding.primary_color }};
+    --secondary: {{ branding.secondary_color }};
+  }
+
+  /* ── Top header bar ── */
+  #header {
+    background: linear-gradient(135deg, {{ branding.secondary_color }}, #1a0a03) !important;
+    {% if branding.background_url %}
+    background: linear-gradient(rgba(20,10,3,0.88), rgba(20,10,3,0.92)),
+                url("{{ branding.background_url }}") center/cover !important;
+    {% endif %}
+    border-bottom: 3px solid {{ branding.primary_color }} !important;
+    padding: 10px 20px !important;
+  }
+
+  /* ── Nav links color ── */
+  #user-tools a, #user-tools { color: rgba(255,255,255,0.85) !important; }
+  #user-tools a:hover { color: {{ branding.primary_color }} !important; }
+
+  /* ── Sidebar / nav module headers ── */
+  .module h2, .module caption, .inline-group h2 {
+    background: {{ branding.secondary_color }} !important;
+    color: #fff !important;
+  }
+
+  /* ── App list section headers ── */
+  #nav-sidebar .current-app .section:link,
+  #nav-sidebar .current-app .section:visited {
+    color: {{ branding.primary_color }} !important;
+  }
+
+  /* ── Buttons ── */
+  .button, input[type=submit], input[type=button],
+  .submit-row input, a.button {
+    background: {{ branding.primary_color }} !important;
+    border-color: {{ branding.primary_color }} !important;
+    color: #fff !important;
+  }
+  .button:hover, input[type=submit]:hover {
+    background: {{ branding.secondary_color }} !important;
+    border-color: {{ branding.secondary_color }} !important;
+  }
+  .button.default, input[type=submit].default {
+    background: {{ branding.secondary_color }} !important;
+  }
+
+  /* ── Links ── */
+  a:link, a:visited { color: {{ branding.primary_color }} !important; }
+  a:hover { color: {{ branding.secondary_color }} !important; }
+
+  /* ── Active nav item ── */
+  #nav-sidebar .selected { border-left-color: {{ branding.primary_color }} !important; }
+
+  /* ── Breadcrumbs ── */
+  div.breadcrumbs {
+    background: {{ branding.secondary_color }} !important;
+    color: rgba(255,255,255,0.7) !important;
+  }
+  div.breadcrumbs a { color: {{ branding.primary_color }} !important; }
+
+  /* ── Page title ── */
+  #content h1 { color: {{ branding.secondary_color }} !important; }
+
+  /* ── Row hover in list view ── */
+  #result_list tbody tr:hover { background: rgba(200,136,58,0.06) !important; }
+
+  /* ── Save buttons row ── */
+  .submit-row { background: #f9f4ee !important; border-top: 2px solid {{ branding.primary_color }} !important; }
+
+  /* ── Paginator ── */
+  .paginator a:link, .paginator a:visited { color: {{ branding.primary_color }} !important; }
+
+  /* ── Logo pulse animation ── */
+  #site-name img { transition: transform 0.2s; }
+  #site-name img:hover { transform: scale(1.08); }
+</style>
+{% endblock %}

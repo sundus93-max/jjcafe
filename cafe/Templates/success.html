@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Order Confirmed!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Lato', sans-serif; min-height: 100vh; display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(rgba(30,15,5,0.65),rgba(30,15,5,0.65)),
+        url("{% if branding.background_url %}{{ branding.background_url }}{% else %}{% static 'images/Background.png' %}{% endif %}") center/cover fixed; }
+    .card { background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);border:1px solid rgba(200,136,58,0.25);
+      border-radius:20px;padding:50px 44px;max-width:460px;width:100%;text-align:center;
+      box-shadow:0 24px 60px rgba(0,0,0,0.4); }
+    .check { font-size:64px;margin-bottom:16px; }
+    h1 { font-family:'Playfair Display',serif;color:#f9f4ee;font-size:2rem;margin-bottom:10px; }
+    p  { color:#7a6050;font-size:0.95rem;line-height:1.6;margin-bottom:8px; }
+    .ref { color:#c8883a;font-weight:700;font-size:1rem;margin:16px 0; }
+    .btn { display:inline-block;margin-top:24px;background:#c8883a;color:#fff;text-decoration:none;
+      border-radius:50px;padding:13px 34px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;font-size:0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="check">✅</div>
+    <h1>Order Confirmed!</h1>
+    <p>Thank you, <strong style="color:#e8d5b7">{{ name }}</strong>!</p>
+    <p>Your order has been placed successfully.</p>
+    {% if order_id %}<p class="ref">Order #{{ order_id }}</p>{% endif %}
+    <p style="margin-top:8px">We'll have it ready shortly. ☕</p>
+    <a href="{% url 'home' %}" class="btn">Back to Home</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JJCafe — Menu</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:#f9f4ee;
+      --espresso:#2b1a0e;
+      --caramel:#c8883a;
+      --warm:#e8d5b7;
+      --text:#3a2a1a;
+      --card-bg:rgba(255,255,255,0.90);
+    }
+
+    body {
+      font-family:'Lato', sans-serif;
+      background:
+        linear-gradient(rgba(30,15,5,0.55), rgba(30,15,5,0.55)),
+        url("{% static 'images/Background.png' %}") center/cover fixed;
+      min-height:100vh;
+      color:var(--text);
+    }
+
+    .navbar {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:0 36px;
+      height:76px;
+      background:rgba(25,13,4,0.85);
+      backdrop-filter:blur(14px);
+    }
+
+    .nav-logo img {
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      border:2px solid var(--caramel);
+    }
+
+    .nav-links {
+      display:flex;
+      gap:30px;
+      list-style:none;
+    }
+
+    .nav-links a {
+      color:var(--warm);
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .cart-btn {
+      background:var(--caramel);
+      color:#fff;
+      padding:8px 18px;
+      border-radius:20px;
+      text-decoration:none;
+    }
+
+    .page-header {
+      text-align:center;
+      padding:50px 20px 20px;
+    }
+
+    .menu-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+      gap:25px;
+      max-width:1100px;
+      margin:40px auto;
+      padding:0 20px;
+    }
+
+    .menu-card {
+      background:var(--card-bg);
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .card-img-wrap {
+      height:180px;
+      background:#eee;
+    }
+
+    .card-img-wrap img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .card-body {
+      padding:15px;
+    }
+
+    .card-footer {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    .price {
+      color:var(--caramel);
+      font-weight:700;
+    }
+
+    .add-btn {
+      background:var(--espresso);
+      color:#fff;
+      padding:6px 14px;
+      border-radius:20px;
+      text-decoration:none;
+      font-size:12px;
+    }
+
+    .add-btn:hover {
+      background:var(--caramel);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+
+  <div class="nav-logo">
+    <a href="{% url 'home' %}">
+      <img src="{% static 'images/logo.png' %}" alt="JJCafe Logo">
+    </a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'menu' %}">Menu</a></li>
+    <li><a href="{% url 'find_us' %}">Find Us</a></li>
+    <li><a href="{% url 'our_story' %}">Our Story</a></li>
+  </ul>
+
+  <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
+
+</nav>
+
+<!-- HEADER -->
+<header class="page-header">
+  <h1>Our Menu</h1>
+</header>
+
+<!-- MENU ITEMS -->
+<main class="menu-grid">
+
+  {% for item in items %}
+  <div class="menu-card">
+
+    <div class="card-img-wrap">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.name }}">
+      {% else %}
+        ☕
+      {% endif %}
+    </div>
+
+    <div class="card-body">
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description }}</p>
+
+      <div class="card-footer">
+        <div class="price">AED {{ item.price }}</div>
+
+        <!-- ✅ FIXED ADD BUTTON -->
+        <a href="{% url 'add_to_cart' item.id %}" class="add-btn">
+          + Add
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+  {% endfor %}
+
+</main>
+
+</body>
+</html>

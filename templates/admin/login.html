@@ -1,0 +1,84 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  body.login {
+    {% if branding.background_url %}
+    background: linear-gradient(rgba(20,10,3,0.75), rgba(20,10,3,0.80)),
+                url("{{ branding.background_url }}") center/cover fixed !important;
+    {% else %}
+    background: linear-gradient(135deg, {{ branding.secondary_color }}, #1a0a03) !important;
+    {% endif %}
+  }
+
+  /* Login card */
+  #container {
+    background: rgba(255,255,255,0.07) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(200,136,58,0.25) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5) !important;
+  }
+
+  /* Header on login */
+  #header {
+    background: linear-gradient(135deg, {{ branding.secondary_color }}, #1a0a03) !important;
+    border-radius: 18px 18px 0 0 !important;
+    border-bottom: 3px solid {{ branding.primary_color }} !important;
+    text-align: center !important;
+    padding: 20px !important;
+  }
+
+  /* Logo above login form */
+  #header:before {
+    content: '';
+    display: block;
+    width: 70px; height: 70px;
+    margin: 0 auto 12px;
+    background: url("{% if branding.logo_url %}{{ branding.logo_url }}{% else %}{% static 'images/logo.png' %}{% endif %}") center/cover;
+    border-radius: 50%;
+    border: 3px solid {{ branding.primary_color }};
+  }
+
+  #branding h1 a { color: #fff !important; font-size: 1.3rem !important; }
+
+  /* Input fields */
+  .form-row input {
+    border: 1px solid rgba(200,136,58,0.35) !important;
+    border-radius: 8px !important;
+    background: rgba(255,255,255,0.08) !important;
+    color: #f9f4ee !important;
+  }
+  .form-row input:focus { border-color: {{ branding.primary_color }} !important; outline: none !important; }
+
+  /* Labels */
+  .form-row label { color: rgba(232,213,183,0.8) !important; font-size: 0.78rem !important; letter-spacing: 0.1em !important; }
+
+  /* Submit button */
+  .submit-row input[type=submit] {
+    background: {{ branding.primary_color }} !important;
+    border-color: {{ branding.primary_color }} !important;
+    border-radius: 50px !important;
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+  }
+  .submit-row { background: transparent !important; border: none !important; padding: 0 !important; }
+
+  /* Links */
+  a { color: {{ branding.primary_color }} !important; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div style="text-align:center">
+  <h1 id="site-name">
+    <a href="{% url 'admin:index' %}">☕ {{ branding.app_name }} Admin</a>
+  </h1>
+</div>
+{% endblock %}
