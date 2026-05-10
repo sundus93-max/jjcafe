@@ -1,38 +1,37 @@
 import json
-import uuid
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum
+from django.views.decorators.http import require_POST
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Q, Sum
 from django.utils import timezone
-from .models import *
 
-# ─────────────────────────────
-# 🟢 WELCOME PORTAL
-# ─────────────────────────────
+from .models import (
+    SiteBranding, Category, Item,
+    ContactInfo, StorySection,
+    Order, OrderItem, CustomerProfile,
+    PaymentMethod, Promotion
+)
 
+# ───────────────── HOME (WELCOME PORTAL)
 def home(request):
     return render(request, 'home.html')
 
+
+# ───────────────── MENU
 def menu(request):
     categories = Category.objects.prefetch_related('items').all()
-    return render(request, 'menu.html', {'categories': categories})
-
-def find_us(request):
-    contact = ContactInfo.objects.first()
-    return render(request, 'find_us.html', {'contact': contact})
-
-def our_story(request):
-    story = StorySection.objects.all()
-    return render(request, 'our_story.html', {'story': story})
+    uncategorised = Item.objects.filter(category__isnull=True)
+    return render(request, 'menu.html', {
+        'categories': categories,
+        'uncategorised': uncategorised,
+    })
 
 
-# ─────────────────────────────
-# 🛒 CART SYSTEM (FIXED)
-# ─────────────────────────────
-
+# ───────────────── CART
 def cart(request):
     cart_data = request.session.get('cart', {})
     items = []
@@ -40,61 +39,54 @@ def cart(request):
 
     for item_id, qty in cart_data.items():
         try:
-            item = Item.objects.get(id=item_id)
+            item = Item.objects.get(id=int(item_id))
             subtotal = item.price * qty
             items.append({
-                'item': item,
+                'id': item.id,
+                'name': item.name,
+                'price': item.price,
                 'qty': qty,
-                'subtotal': subtotal
+                'total': subtotal
             })
             total += subtotal
-        except:
+        except Item.DoesNotExist:
             continue
 
     return render(request, 'cart.html', {'items': items, 'total': total})
 
 
-@login_required
+# ───────────────── ADD TO CART
+@login_required(login_url='/login/')
 def add_to_cart(request, item_id):
-    cart = request.session.get('cart', {})
-    cart[str(item_id)] = cart.get(str(item_id), 0) + 1
-    request.session['cart'] = cart
-    return redirect('cart')
+    item = get_object_or_404(Item, id=item_id)
+
+    qty = 1
+    if request.method == "POST":
+        qty = int(request.POST.get("quantity", 1))
+
+    cart = request.session.get("cart", {})
+    key = str(item_id)
+    cart[key] = cart.get(key, 0) + qty
+
+    request.session["cart"] = cart
+    return redirect("cart")
 
 
-@login_required
-def update_cart(request, item_id):
-    if request.method == 'POST':
-        qty = int(request.POST.get('quantity', 1))
-        cart = request.session.get('cart', {})
-
-        if qty <= 0:
-            cart.pop(str(item_id), None)
-        else:
-            cart[str(item_id)] = qty
-
-        request.session['cart'] = cart
-
-    return redirect('cart')
-
-
-@login_required
+# ───────────────── REMOVE
 def remove_from_cart(request, item_id):
-    cart = request.session.get('cart', {})
+    cart = request.session.get("cart", {})
     cart.pop(str(item_id), None)
-    request.session['cart'] = cart
-    return redirect('cart')
+    request.session["cart"] = cart
+    return redirect("cart")
 
 
-# ─────────────────────────────
-# 💳 CHECKOUT (SIMPLE FIXED)
-# ─────────────────────────────
-
-@login_required
+# ───────────────── CHECKOUT (simple safe version)
+@login_required(login_url='/login/')
 def checkout(request):
-    cart = request.session.get('cart', {})
+    cart = request.session.get("cart", {})
+
     if not cart:
-        return redirect('cart')
+        return redirect("cart")
 
     total = 0
     items = []
@@ -103,18 +95,19 @@ def checkout(request):
         item = Item.objects.get(id=item_id)
         subtotal = item.price * qty
         total += subtotal
-        items.append((item, qty))
+        items.append((item, qty, subtotal))
 
-    if request.method == 'POST':
+    if request.method == "POST":
         order = Order.objects.create(
             user=request.user,
-            name=request.POST.get('name'),
-            phone=request.POST.get('phone'),
+            name=request.POST.get("name"),
+            email=request.POST.get("email"),
+            phone=request.POST.get("phone"),
             total=total,
-            status='pending'
+            status="pending"
         )
 
-        for item, qty in items:
+        for item, qty, subtotal in items:
             OrderItem.objects.create(
                 order=order,
                 item=item,
@@ -123,95 +116,98 @@ def checkout(request):
                 quantity=qty
             )
 
-        request.session['cart'] = {}
-        return render(request, 'success.html', {'order': order})
+        request.session["cart"] = {}
+        return render(request, "success.html", {"order": order})
 
-    return render(request, 'checkout.html', {'items': items, 'total': total})
+    return render(request, "checkout.html", {"items": items, "total": total})
 
 
-# ─────────────────────────────
-# 🔐 LOGIN
-# ─────────────────────────────
-
+# ───────────────── LOGIN
 def login_view(request):
     if request.method == "POST":
         user = authenticate(
-            request,
-            username=request.POST['username'],
-            password=request.POST['password']
+            username=request.POST["username"],
+            password=request.POST["password"]
         )
         if user:
             login(request, user)
-            return redirect('/')
-    return render(request, 'login.html')
+            return redirect("/")
+    return render(request, "login.html")
 
 
-# ─────────────────────────────
-# 🟡 ORDER PORTAL (STAFF)
-# ─────────────────────────────
+# ───────────────── PROFILE (FIXED - THIS WAS YOUR ERROR)
+@login_required
+def profile(request):
+    profile, _ = CustomerProfile.objects.get_or_create(user=request.user)
+    orders = Order.objects.filter(user=request.user)
 
-from django.contrib.admin.views.decorators import staff_member_required
-
-@staff_member_required
-def orders_portal(request):
-    orders = Order.objects.all().order_by('-created_at')
-
-    stats = {
-        'total': orders.count(),
-        'pending': orders.filter(status='pending').count(),
-        'completed': orders.filter(status='completed').count(),
-        'revenue': orders.filter(status='completed').aggregate(Sum('total'))['total__sum'] or 0
-    }
-
-    return render(request, 'orders_portal.html', {
-        'orders': orders,
-        'stats': stats
+    return render(request, "profile.html", {
+        "profile": profile,
+        "orders": orders
     })
 
 
+# ───────────────── ORDER PORTAL (ADMIN STAFF)
+@staff_member_required
+def orders_portal(request):
+    orders = Order.objects.all().order_by("-created_at")
+
+    stats = {
+        "total": orders.count(),
+        "pending": orders.filter(status="pending").count(),
+        "completed": orders.filter(status="completed").count(),
+    }
+
+    return render(request, "orders_portal.html", {
+        "orders": orders,
+        "stats": stats
+    })
+
+
+# ───────────────── UPDATE STATUS
 @staff_member_required
 def order_update_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
+
     if request.method == "POST":
-        order.status = request.POST['status']
+        order.status = request.POST.get("status")
         order.save()
-    return redirect('orders_portal')
+
+    return redirect("orders_portal")
 
 
-# ─────────────────────────────
-# 🌐 API (keep minimal)
-# ─────────────────────────────
+# ───────────────── APIs (FIXED BRANDING)
+def api_branding(request):
+    b = SiteBranding.objects.first()
+
+    if not b:
+        return JsonResponse({
+            "app_name": "JJCafe",
+            "tagline": "Brew • Bite • Bliss"
+        })
+
+    return JsonResponse({
+        "app_name": b.app_name,
+        "tagline": b.tagline,
+        "logo": request.build_absolute_uri(b.website_logo.url) if b.website_logo else None,
+    })
+
 
 def api_menu(request):
+    categories = Category.objects.prefetch_related("items").all()
+
     data = []
-    for cat in Category.objects.all():
+    for c in categories:
         data.append({
-            'name': cat.name,
-            'items': [
-                {'name': i.name, 'price': str(i.price)}
-                for i in cat.items.all()
+            "name": c.name,
+            "items": [
+                {
+                    "id": i.id,
+                    "name": i.name,
+                    "price": str(i.price),
+                }
+                for i in c.items.all()
             ]
         })
-    return JsonResponse({'menu': data})
 
-
-def api_branding(request):
-    return JsonResponse({'app': 'JJCafe'})
-
-
-def api_contact(request):
-    c = ContactInfo.objects.first()
-    return JsonResponse({'phone': c.phone if c else ''})
-
-
-def api_story(request):
-    return JsonResponse({'story': list(StorySection.objects.values())})
-
-
-@csrf_exempt
-def api_login(request):
-    return JsonResponse({'status': 'ok'})
-
-
-def api_promotions(request):
-    return JsonResponse({'promos': []})
+    return JsonResponse({"categories": data})
