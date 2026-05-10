@@ -8,9 +8,9 @@ import dj_database_url
 DEBUG = False
 
 ALLOWED_HOSTS = [
-	'*.onrender.com',
-	'localhost',
-	'127.0.0.1',
+    '*.onrender.com',
+    'localhost',
+    '127.0.0.1',
     'jjcafe.onrender.com',
 ]
 
@@ -34,8 +34,16 @@ CSRF_TRUSTED_ORIGINS = [
 # ✅ PostgreSQL on Render via environment variable
 DATABASES = {
     "default": dj_database_url.config(
-	default='postgresql://jjcafe_user:zbvU17KfeVAamXG4sj9xeG5aMXE4VM0L@dpg-d804jqbtqb8s73fr8gtg-a.virginia-postgres.render.com/jjcafe',
+        default='postgresql://jjcafe_user:zbvU17KfeVAamXG4sj9xeG5aMXE4VM0L@dpg-d804jqbtqb8s73fr8gtg-a.virginia-postgres.render.com/jjcafe',
         conn_max_age=600,
         ssl_require=True
     )
 }
+
+# =====================================================
+# CLOUDINARY — serves all uploaded media in production
+# =====================================================
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+MEDIA_URL = '/media/'
