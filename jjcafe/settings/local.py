@@ -1,33 +1,39 @@
 from .base import *
-
-# =====================================================
-# LOCAL DEVELOPMENT SETTINGS
-# =====================================================
+import dj_database_url
+import os
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# Local MySQL database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'jjcafe_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'sql_mode': 'STRICT_TRANS_TABLES',
-            'charset': 'utf8mb4',        # ← add this line
+#USE_LIVE_DB = os.environ.get('USE_LIVE_DB', 'false').lower() == 'true'
+USE_LIVE_DB = False
+
+if USE_LIVE_DB:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'jjcafe_db',
+            'USER': 'root',
+            'PASSWORD': '',
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'OPTIONS': {
+                'sql_mode': 'STRICT_TRANS_TABLES',
+                'charset': 'utf8mb4',
+            }
         }
     }
-}
 
-# Local media serving
-MEDIA_URL  = '/media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Disable secure cookies locally
 SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE    = False
+CSRF_COOKIE_SECURE = False

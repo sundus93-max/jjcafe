@@ -1,0 +1,9 @@
+🎯 FINAL CLEAN WORKFLOW (REMEMBER THIS)
+🧪 Development
+$env:USE_LIVE_DB="false"
+python manage.py runserver
+☁️ Production test
+$env:USE_LIVE_DB="true"
+python manage.py runserver
+📦 Move data
+dumpdata → loaddata
