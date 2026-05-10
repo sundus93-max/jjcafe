@@ -7,6 +7,9 @@ from .models import (
     CustomerProfile, Order, OrderItem, Promotion, PaymentMethod
 )
 
+# ── Import proxy models from Django auth (created by allauth migration) ───────
+from django.contrib.auth.models import StaffUserProxy, CustomerUserProxy
+
 # ── Remove default Users and Groups from admin ────────────────────────────────
 admin.site.unregister(User)
 admin.site.unregister(Group)
@@ -75,20 +78,6 @@ class SiteBrandingAdmin(admin.ModelAdmin):
 # ══════════════════════════════════════════════════════════════
 #  2. STAFF USERS  (separate from customers)
 # ══════════════════════════════════════════════════════════════
-class StaffUserProxy(User):
-    class Meta:
-        proxy               = True
-        verbose_name        = "Staff Member"
-        verbose_name_plural = "Staff Members"
-        app_label           = "auth"   # ← appears under Authentication & Authorization
-
-class CustomerUserProxy(User):
-    class Meta:
-        proxy               = True
-        verbose_name        = "Customer Account"
-        verbose_name_plural = "Customer Accounts"
-        app_label           = "auth"   # ← appears under Authentication & Authorization
-
 @admin.register(StaffUserProxy)
 class StaffUserAdmin(BaseUserAdmin):
     list_display  = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'date_joined')
@@ -373,7 +362,6 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # Auto-create defaults if none exist
         if not qs.exists():
             defaults = [
                 ('Credit / Debit Card', 'card',             '💳', 1, True),
@@ -391,12 +379,9 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  ROLE MANAGEMENT  (#7)
+#  ROLE MANAGEMENT
 # ══════════════════════════════════════════════════════════════
-# Re-register Group with better UI
-from django.contrib.auth.models import Group
 from django.contrib.auth.admin import GroupAdmin
-
 admin.site.register(Group, GroupAdmin)
 
 
