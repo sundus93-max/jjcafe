@@ -4,22 +4,23 @@ Django settings for jjcafe project (PRODUCTION READY for Render)
 
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ⚠️ SECURITY (KEEP SECRET IN PRODUCTION)
-SECRET_KEY = 'django-insecure-=e4jd6k2bpjo@fyyw3uw&g^^4l@6&_1^67gkd%y^2^rsp*7fg%'
+# ─────────────────────────────────────────
+# SECURITY
+# ─────────────────────────────────────────
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-fallback-key-change-me"
+)
 
-# ─────────────────────────────────────────
-# DEBUG
-# ─────────────────────────────────────────
-DEBUG = False   # 👈 IMPORTANT for Render
+DEBUG = False
 
-# ─────────────────────────────────────────
-# HOSTS
-# ─────────────────────────────────────────
 ALLOWED_HOSTS = [
     "jjcafe.onrender.com",
+    ".onrender.com",
     "localhost",
     "127.0.0.1",
 ]
@@ -56,7 +57,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 IMPORTANT for Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,9 +68,6 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
-# ─────────────────────────────────────────
-# CORS
-# ─────────────────────────────────────────
 CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'jjcafe.urls'
@@ -97,13 +95,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'jjcafe.wsgi.application'
 
 # ─────────────────────────────────────────
-# DATABASE (FIXED FOR RENDER)
+# DATABASE (RENDER SAFE)
 # ─────────────────────────────────────────
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',   # 👈 FIXED (NO CRASH)
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
 }
 
 # ─────────────────────────────────────────
@@ -124,11 +122,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # ─────────────────────────────────────────
 # ALLAUTH
 # ─────────────────────────────────────────
-ACCOUNT_LOGIN_METHODS       = {"email"}
-ACCOUNT_SIGNUP_FIELDS       = ["email*", "password1*", "password2*"]
-ACCOUNT_EMAIL_VERIFICATION  = "none"
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
-LOGIN_URL          = '/login/'
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -136,22 +134,25 @@ LOGOUT_REDIRECT_URL = '/'
 # INTERNATIONALIZATION
 # ─────────────────────────────────────────
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE     = 'UTC'
-USE_I18N      = True
-USE_TZ        = True
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
 
 # ─────────────────────────────────────────
 # STATIC FILES (RENDER FIX)
 # ─────────────────────────────────────────
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-MEDIA_URL  = '/media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# WhiteNoise (important)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
