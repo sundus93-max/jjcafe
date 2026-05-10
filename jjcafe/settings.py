@@ -17,9 +17,9 @@ SECRET_KEY = os.environ.get(
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
     "jjcafe.onrender.com",
+    "127.0.0.1",
+    "localhost"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
