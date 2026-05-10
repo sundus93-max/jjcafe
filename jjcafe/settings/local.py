@@ -14,11 +14,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jjcafe_db',
         'USER': 'root',
-        'PASSWORD': '',         # ← Change to your MySQL password
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
             'sql_mode': 'STRICT_TRANS_TABLES',
+            'charset': 'utf8mb4',        # ← add this line
         }
     }
 }

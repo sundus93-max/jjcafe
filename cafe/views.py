@@ -8,8 +8,19 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.conf import settings
-from .models import SiteBranding, Category, Item, ContactInfo, StorySection
+from .models import (
+    SiteBranding, Category, Item, ContactInfo, StorySection,
+    CustomerProfile, Order, OrderItem, Promotion, PaymentMethod,
+    OrderNotification
+)
 
+
+def debug_db(request):
+    data = {
+        "branding": list(SiteBranding.objects.values()),
+        "promotions": list(Promotion.objects.values()),
+    }
+    return JsonResponse(data)
 
 # ─── PAGES ─────────────────────────────────────────────────────────────
 
