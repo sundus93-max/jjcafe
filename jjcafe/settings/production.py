@@ -25,7 +25,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Supabase PostgreSQL via connection pooler (port 6543)
 DATABASES = {
     "default": dj_database_url.parse(
-        'postgresql://postgres.ghpcsykhbfjzfxqsehqd:2011Uc%24054%23%23@aws-0-eu-central-1.pooler.supabase.com:5432/postgres',
+        'postgresql://postgres.ghpcsykhbfjzfxqsehqd:2011Uc%24054%23%23@@aws-1-ap-south-1.pooler.supabase.com:5432/postgres',
         conn_max_age=600,
     )
 }
