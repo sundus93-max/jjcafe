@@ -38,175 +38,165 @@
       border-bottom: 1px solid rgba(200,136,58,0.3);
     }
     .nav-logo img {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 2px solid var(--caramel);
-      object-fit: cover;
-      transition: transform 0.3s;
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2px solid var(--caramel); object-fit: cover; transition: transform 0.3s;
     }
-    .nav-logo img:hover {
-      transform: scale(1.08) rotate(3deg);
-    }
+    .nav-logo img:hover { transform: scale(1.08) rotate(3deg); }
     .nav-links {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      gap: 38px;
-      list-style: none;
+      flex: 1; display: flex; justify-content: center; gap: 38px; list-style: none;
     }
     .nav-links a {
-      font-weight: 700;
-      font-size: 0.78rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--warm);
-      text-decoration: none;
-      padding-bottom: 4px;
-      border-bottom: 2px solid transparent;
-      transition: 0.2s;
+      font-weight: 700; font-size: 0.78rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--warm); text-decoration: none;
+      padding-bottom: 4px; border-bottom: 2px solid transparent; transition: 0.2s;
     }
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--caramel);
-      border-bottom-color: var(--caramel);
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--caramel); border-bottom-color: var(--caramel);
     }
     /* ─── LOGIN BTN ────────────────────── */
     .nav-login-btn {
-      background: transparent;
-      color: var(--caramel);
-      border: 2px solid var(--caramel);
-      padding: 8px 20px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-right: 10px;
-      transition: 0.2s;
+      background: transparent; color: var(--caramel);
+      border: 2px solid var(--caramel); padding: 8px 20px;
+      border-radius: 50px; text-decoration: none; font-weight: 700;
+      font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-right: 10px; transition: 0.2s;
     }
-    .nav-login-btn:hover {
-      background: var(--caramel);
-      color: white;
-      transform: translateY(-1px);
+    .nav-login-btn:hover { background: var(--caramel); color: white; transform: translateY(-1px); }
+    /* ─── ICON BTN ─────────────────────── */
+    .icon-btn {
+      background: var(--caramel); color: white;
+      padding: 9px 16px; border-radius: 50px; text-decoration: none;
+      font-size: 1rem; transition: 0.2s; margin-left: 6px;
     }
-    /* ─── CART BTN ─────────────────────── */
-    .cart-btn {
-      background: var(--caramel);
-      color: white;
-      padding: 9px 22px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.78rem;
-      transition: 0.2s;
+    .icon-btn:hover { background: #a86d28; transform: translateY(-1px); }
+    .icon-btn.admin {
+      background: rgba(200,136,58,0.25);
+      border: 1.5px solid rgba(200,136,58,0.5);
     }
-    .cart-btn:hover {
-      background: #a86d28;
-      transform: translateY(-1px);
-    }
+    .icon-btn.admin:hover { background: rgba(200,136,58,0.5); }
     /* ─── HEADER ───────────────────────── */
-    .page-header {
-      text-align: center;
-      padding: 60px 20px 24px;
-    }
+    .page-header { text-align: center; padding: 60px 20px 24px; }
     .page-header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      color: var(--cream);
+      font-size: clamp(2rem, 5vw, 3.4rem); color: var(--cream);
     }
     footer {
-      text-align: center;
-      padding: 28px;
-      color: rgba(255,255,255,0.28);
-      font-size: 0.76rem;
+      text-align: center; padding: 28px;
+      color: rgba(255,255,255,0.28); font-size: 0.76rem;
     }
     {% block extra_css %}{% endblock %}
-  
-    /* Notification bell */
-    .notif-wrap { position:relative; }
-    .notif-bell { background:none;border:none;color:var(--warm);font-size:1.3rem;cursor:pointer;padding:8px;position:relative; }
-    .notif-badge { position:absolute;top:4px;right:4px;background:#e74c3c;color:#fff;border-radius:50%;width:17px;height:17px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center; }
-    .notif-dropdown { display:none;position:absolute;right:0;top:48px;width:300px;background:rgba(20,10,3,0.97);border:1px solid rgba(200,136,58,0.3);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,0.5);z-index:200;overflow:hidden; }
-    .notif-dropdown.open { display:block; }
-    .notif-header { padding:12px 16px;border-bottom:1px solid rgba(200,136,58,0.2);display:flex;justify-content:space-between;align-items:center; }
-    .notif-header span { color:var(--cream);font-weight:700;font-size:0.85rem; }
-    .notif-header a { color:var(--caramel);font-size:0.75rem;text-decoration:none; }
-    .notif-item { padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer; }
-    .notif-item:hover { background:rgba(200,136,58,0.08); }
-    .notif-item.unread { background:rgba(200,136,58,0.06); }
-    .notif-msg { font-size:0.83rem;color:var(--warm); }
-    .notif-time { font-size:0.72rem;color:var(--muted);margin-top:2px; }
-    .notif-empty { padding:20px;text-align:center;color:var(--muted);font-size:0.85rem; }
-</style>
+
+    /* ─── NOTIFICATION BELL ─────────────── */
+    .notif-wrap { position: relative; }
+    .notif-bell {
+      background: none; border: none; color: var(--warm);
+      font-size: 1.3rem; cursor: pointer; padding: 8px; position: relative;
+    }
+    .notif-badge {
+      position: absolute; top: 4px; right: 4px; background: #e74c3c;
+      color: #fff; border-radius: 50%; width: 17px; height: 17px;
+      font-size: 10px; font-weight: 700; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .notif-dropdown {
+      display: none; position: absolute; right: 0; top: 48px; width: 300px;
+      background: rgba(20,10,3,0.97); border: 1px solid rgba(200,136,58,0.3);
+      border-radius: 14px; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+      z-index: 200; overflow: hidden;
+    }
+    .notif-dropdown.open { display: block; }
+    .notif-header {
+      padding: 12px 16px; border-bottom: 1px solid rgba(200,136,58,0.2);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .notif-header span { color: var(--cream); font-weight: 700; font-size: 0.85rem; }
+    .notif-header a { color: var(--caramel); font-size: 0.75rem; text-decoration: none; }
+    .notif-item {
+      padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+    }
+    .notif-item:hover { background: rgba(200,136,58,0.08); }
+    .notif-item.unread { background: rgba(200,136,58,0.06); }
+    .notif-msg { font-size: 0.83rem; color: var(--warm); }
+    .notif-time { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .notif-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  </style>
 </head>
 <body>
   <!-- NAVBAR -->
   <nav class="navbar">
+
     <!-- LOGO -->
     <div class="nav-logo">
       <a href="{% url 'home' %}">
         <img src="{% if branding.logo_url %}{{ branding.logo_url }}{% else %}{% static 'images/logo.png' %}{% endif %}" alt="{{ branding.app_name }}">
       </a>
     </div>
-    <!-- MENU -->
+
+    <!-- MENU LINKS -->
     <ul class="nav-links">
       <li><a href="{% url 'home' %}" {% if active == 'home' %}class="active"{% endif %}>Home</a></li>
       <li><a href="{% url 'menu' %}" {% if active == 'menu' %}class="active"{% endif %}>Menu</a></li>
       <li><a href="{% url 'find_us' %}" {% if active == 'find_us' %}class="active"{% endif %}>Find Us</a></li>
       <li><a href="{% url 'our_story' %}" {% if active == 'our_story' %}class="active"{% endif %}>Our Story</a></li>
     </ul>
-    <!-- LOGIN / LOGOUT / PROFILE -->
-    {% if user.is_authenticated %}
-    <div style="display:flex;align-items:center;gap:8px">
-      <a href="{% url 'profile' %}" class="nav-login-btn" title="{{ user.email }}">👤 My Account</a>
-      <a href="{% url 'account_logout' %}" class="nav-login-btn" style="font-size:0.72rem;padding:8px 12px;opacity:0.7">Sign Out</a>
-    </div>
-    {% else %}
-      <a href="{% url 'account_login' %}" class="nav-login-btn">👤 Login</a>
-    {% endif %}
-    <!-- NOTIFICATIONS -->
-    {% if user.is_authenticated %}
-    <div class="notif-wrap">
-      <button class="notif-bell" onclick="toggleNotif()" id="notifBtn">🔔</button>
-      <span class="notif-badge" id="notifBadge" style="display:none">0</span>
-      <div class="notif-dropdown" id="notifDropdown">
-        <div class="notif-header">
-          <span>Notifications</span>
-          <a href="#" onclick="markAllRead()">Mark all read</a>
+
+    <!-- RIGHT SIDE BUTTONS -->
+    <div style="display:flex;align-items:center;gap:6px;">
+
+      <!-- LOGIN / ACCOUNT / LOGOUT -->
+      {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="nav-login-btn" title="{{ user.email }}">👤 My Account</a>
+        <a href="{% url 'account_logout' %}" class="nav-login-btn" style="font-size:0.72rem;padding:8px 12px;opacity:0.7">Sign Out</a>
+      {% else %}
+        <a href="{% url 'account_login' %}" class="nav-login-btn">👤 Login</a>
+      {% endif %}
+
+      <!-- NOTIFICATION BELL — authenticated users only -->
+      {% if user.is_authenticated %}
+      <div class="notif-wrap">
+        <button class="notif-bell" onclick="toggleNotif()" id="notifBtn">🔔</button>
+        <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-header">
+            <span>Notifications</span>
+            <a href="#" onclick="markAllRead()">Mark all read</a>
+          </div>
+          <div id="notifList"><div class="notif-empty">No notifications</div></div>
         </div>
-        <div id="notifList"><div class="notif-empty">No notifications</div></div>
       </div>
+      {% endif %}
+
+      <!-- CART — icon only -->
+      <a href="{% url 'cart' %}" class="icon-btn" title="Cart">🛒</a>
+
+      <!-- ADMIN — icon only, superusers only, shown ONCE -->
+      {% if user.is_superuser %}
+      <a href="{% url 'admin:index' %}" class="icon-btn admin" title="Admin Portal">⚙️</a>
+      {% endif %}
+
     </div>
-    {% endif %}
-    <!-- CART -->
-    <a href="{% url 'cart' %}" class="cart-btn">🛒 Cart</a>
-    {% if user.is_staff %}
-    <a href="{% url 'admin:index' %}" class="cart-btn" style="background:rgba(200,136,58,0.3);margin-left:6px">⚙️ Admin</a>
-    {% endif %}
-    {% if user.is_staff %}
-    <a href="{% url 'admin:index' %}" class="cart-btn" style="background:rgba(200,136,58,0.3);margin-left:6px">⚙️ Admin</a>
-    {% endif %}
   </nav>
+
   <!-- PROMOTIONS BANNER -->
   {% for promo in site_promotions %}
-  {% if promo.promo_type == 'text' %}
-  <div style="background:linear-gradient(90deg,#2b1a0e,#c8883a,#2b1a0e);color:#fff;text-align:center;padding:10px 20px;font-size:0.88rem;font-weight:700;letter-spacing:0.08em">
-    📢 {{ promo.title }}: {{ promo.text }}
-  </div>
-  {% elif promo.promo_type == 'image' and promo.image %}
-  <div style="text-align:center;background:#1a0e05">
-    <img src="{{ promo.image.url }}" style="max-width:100%;max-height:120px;object-fit:cover;width:100%" alt="{{ promo.title }}">
-  </div>
-  {% elif promo.promo_type == 'video' and promo.video_url %}
-  <div style="text-align:center;background:#1a0e05;padding:10px">
-    <iframe src="{{ promo.video_url }}" width="100%" height="120" frameborder="0" allowfullscreen style="max-width:900px"></iframe>
-  </div>
-  {% endif %}
+    {% if promo.promo_type == 'text' %}
+    <div style="background:linear-gradient(90deg,#2b1a0e,#c8883a,#2b1a0e);color:#fff;text-align:center;padding:10px 20px;font-size:0.88rem;font-weight:700;letter-spacing:0.08em">
+      📢 {{ promo.title }}: {{ promo.text }}
+    </div>
+    {% elif promo.promo_type == 'image' and promo.image %}
+    <div style="text-align:center;background:#1a0e05">
+      <img src="{{ promo.image.url }}" style="max-width:100%;max-height:120px;object-fit:cover;width:100%" alt="{{ promo.title }}">
+    </div>
+    {% elif promo.promo_type == 'video' and promo.video_url %}
+    <div style="text-align:center;background:#1a0e05;padding:10px">
+      <iframe src="{{ promo.video_url }}" width="100%" height="120" frameborder="0" allowfullscreen style="max-width:900px"></iframe>
+    </div>
+    {% endif %}
   {% endfor %}
+
   <!-- PAGE CONTENT -->
   {% block content %}{% endblock %}
+
   <!-- FOOTER -->
   <footer>© JJCafe — All rights reserved</footer>
 
@@ -232,7 +222,7 @@ function loadNotifs() {
         return;
       }
       list.innerHTML = data.notifications.map(n => `
-        <div class="notif-item ${n.is_read ? '' : 'unread'}">
+        <div class="notif-item ${n.is_read ? '' : 'unread'}" onclick="markOneRead(${n.id})">
           <div class="notif-msg">📦 ${n.message}</div>
           <div class="notif-time">${n.time}</div>
         </div>`).join('');
@@ -242,7 +232,11 @@ function markAllRead() {
   fetch('/notifications/', {method:'POST', headers:{'X-CSRFToken':'{{ csrf_token }}'}})
     .then(() => loadNotifs());
 }
-// Poll every 30 seconds
+function markOneRead(id) {
+  fetch('/notifications/', {method:'POST', headers:{'X-CSRFToken':'{{ csrf_token }}'}})
+    .then(() => loadNotifs());
+}
+// Poll every 30 seconds for new notifications
 setInterval(loadNotifs, 30000);
 window.onload = loadNotifs;
 </script>
