@@ -349,7 +349,57 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 # ══════════════════════════════════════════════════════════════
 #  9. ROLE MANAGEMENT
 # ══════════════════════════════════════════════════════════════
-from django.contrib.auth.admin import GroupAdmin
+from django.contrib.auth.admin import GroupAdmin@admin.register(Promotion)
+class PromotionAdmin(admin.ModelAdmin):
+    list_display = ('promo_preview', 'title', 'type_badge', 'is_active', 'date_range', 'created_at')
+    list_filter = ('is_active', 'promo_type')
+    search_fields = ('title', 'text')
+    list_display_links = ('title',)
+    list_editable = ('is_active',)
+
+    fieldsets = (
+        ('📢 Promotion Details', {
+            'fields': ('title', 'promo_type', 'is_active')
+        }),
+        ('📝 Content', {
+            'fields': ('text', 'image', 'img_preview', 'video_url')
+        }),
+        ('📅 Schedule (optional)', {
+            'fields': ('start_date', 'end_date')
+        }),
+    )
+
+    readonly_fields = ('img_preview', 'created_at')
+
+    def img_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="max-width:300px;max-height:160px;border-radius:10px;">',
+                obj.image.url
+            )
+        return "—"
+
+    def promo_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width:48px;height:48px;border-radius:8px">', obj.image.url)
+        if obj.promo_type == 'video':
+            return format_html('<span style="font-size:20px">🎬</span>')
+        return format_html('<span style="font-size:20px">📝</span>')
+
+    promo_preview.short_description = "Preview"
+
+    def type_badge(self, obj):
+        colors = {'text': '#3498db', 'image': '#9b59b6', 'video': '#e74c3c'}
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;">{}</span>',
+            colors.get(obj.promo_type, '#999'),
+            obj.get_promo_type_display()
+        )
+
+    def date_range(self, obj):
+        if obj.start_date and obj.end_date:
+            return f"{obj.start_date} → {obj.end_date}"
+        return "—"
 admin.site.register(Group, GroupAdmin)
 
 
