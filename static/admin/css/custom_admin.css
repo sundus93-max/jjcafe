@@ -1,0 +1,78 @@
+/* ══════════════════════════════════════════════
+   JJCafe Admin — Custom Fixes
+   1. Make filter panel compact
+   2. Fix action dropdown
+   ══════════════════════════════════════════════ */
+
+/* ── FILTER PANEL — Make compact ────────────── */
+#changelist-filter {
+    width: 180px !important;
+    min-width: 180px !important;
+    font-size: 12px !important;
+}
+
+#changelist-filter h2 {
+    font-size: 11px !important;
+    padding: 6px 10px !important;
+    letter-spacing: 0.08em;
+}
+
+#changelist-filter h3 {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+    margin: 0 !important;
+}
+
+#changelist-filter ul {
+    padding: 4px 10px !important;
+    margin: 0 !important;
+}
+
+#changelist-filter ul li {
+    padding: 2px 0 !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+}
+
+#changelist-filter ul li a {
+    font-size: 12px !important;
+    padding: 1px 0 !important;
+}
+
+/* ── ACTION BAR — Fix layout ─────────────────── */
+.actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    flex-wrap: wrap !important;
+}
+
+.actions label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    margin-right: 4px !important;
+}
+
+select[name="action"] {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    height: 30px !important;
+    border-radius: 4px !important;
+    min-width: 160px !important;
+}
+
+button[name="index"],
+input[name="index"],
+.button[name="index"] {
+    font-size: 12px !important;
+    padding: 4px 14px !important;
+    height: 30px !important;
+    cursor: pointer !important;
+}
+
+/* ── SHOW COUNTS toggle ─────────────────────── */
+#changelist-filter .filter-help {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+}
