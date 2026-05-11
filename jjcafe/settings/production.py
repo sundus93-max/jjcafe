@@ -33,10 +33,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 # ✅ Database — reads from DATABASE_URL environment variable
 DATABASES = {
-    "default": dj_database_url.config(
-        env='DATABASE_URL',
+    "default": dj_database_url.parse(
+        'postgresql://postgres:2011Uc%24054%23%23@db.ghpcsykhbfjzfxqsehqd.supabase.co:5432/postgres',
         conn_max_age=600,
-        ssl_require=False,
     )
 }
 
