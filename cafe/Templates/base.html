@@ -145,7 +145,7 @@
 
       <!-- LOGIN / ACCOUNT / LOGOUT -->
       {% if user.is_authenticated %}
-        <a href="{% url 'profile' %}" class="nav-login-btn" title="{{ user.email }}">👤 My Account</a>
+        <a href="{% url 'profile' %}" class="nav-login-btn" title="{{ user.email }}">👤</a>
         <a href="{% url 'account_logout' %}" class="nav-login-btn" style="font-size:0.72rem;padding:8px 12px;opacity:0.7">Sign Out</a>
       {% else %}
         <a href="{% url 'account_login' %}" class="nav-login-btn">👤 Login</a>
@@ -167,11 +167,11 @@
       {% endif %}
 
       <!-- CART — icon only -->
-      <a href="{% url 'cart' %}" class="icon-btn" title="Cart">🛒</a>
+     <a href="/cart/" class="icon-btn" title="Cart">🛒</a>
 
       <!-- ADMIN — icon only, superusers only, shown ONCE -->
       {% if user.is_superuser %}
-      <a href="{% url 'admin:index' %}" class="icon-btn admin" title="Admin Portal">⚙️</a>
+      <a href="/admin/" class="icon-btn admin" title="Admin Portal">⚙️</a>
       {% endif %}
 
     </div>
