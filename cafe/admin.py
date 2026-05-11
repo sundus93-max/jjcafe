@@ -256,12 +256,19 @@ class PromotionAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'promo_type')
     search_fields = ('title', 'text')
     list_display_links = ('title',)
-    list_editable = ('is_active',)    fieldsets = (
-        ('📢 Promotion Details', {'fields': ('title', 'promo_type', 'is_active')}),
-        ('📝 Content', {'fields': ('text', 'image', 'img_preview', 'video_url'), 'description': 'Text Banner → fill Text only | Image → upload Image only | Video → paste Video URL only'}),
-        ('📅 Schedule (optional)', {'fields': ('start_date', 'end_date'), 'description': 'Leave blank to always show.'}),
-    )
-    readonly_fields = ('img_preview', 'created_at')
+    list_editable = ('is_active',)
+
+    fieldsets = (
+        ('📢 Promotion Details', {
+            'fields': ('title', 'promo_type', 'is_active')
+        }),
+        ('📝 Content', {
+            'fields': ('text', 'image', 'img_preview', 'video_url')
+        }),
+        ('📅 Schedule (optional)', {
+            'fields': ('start_date', 'end_date')
+        }),
+    )    readonly_fields = ('img_preview', 'created_at')
 
     def img_preview(self, obj):
         if obj.image:
