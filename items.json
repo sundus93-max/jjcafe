@@ -1,75 +1,5 @@
 [
 {
-  "model": "cafe.category",
-  "pk": 3,
-  "fields": {
-    "name": "BEVERAGES",
-    "description": "",
-    "image": "",
-    "order": 0
-  }
-},
-{
-  "model": "cafe.category",
-  "pk": 4,
-  "fields": {
-    "name": "CAKES",
-    "description": "",
-    "image": "",
-    "order": 0
-  }
-},
-{
-  "model": "cafe.category",
-  "pk": 5,
-  "fields": {
-    "name": "BROWNIES",
-    "description": "",
-    "image": "",
-    "order": 0
-  }
-},
-{
-  "model": "cafe.category",
-  "pk": 6,
-  "fields": {
-    "name": "DONUTS",
-    "description": "",
-    "image": "",
-    "order": 0
-  }
-},
-{
-  "model": "cafe.category",
-  "pk": 7,
-  "fields": {
-    "name": "JJ SPECIAL",
-    "description": "",
-    "image": "",
-    "order": 0
-  }
-},
-{
-  "model": "cafe.category",
-  "pk": 8,
-  "fields": {
-    "name": "COOKIES",
-    "description": "",
-    "image": "",
-    "order": 0
-  }
-},
-{
-  "model": "cafe.category",
-  "pk": 9,
-  "fields": {
-    "name": "HOMEMADE CHOCOLATE",
-    "description": "",
-    "image": "",
-    "order": 0
-  }
-},
-{
   "model": "cafe.item",
   "pk": 4,
   "fields": {
@@ -430,22 +360,6 @@
     "price": "600.00",
     "image": "",
     "description": ""
-  }
-},
-{
-  "model": "cafe.promotion",
-  "pk": 1,
-  "fields": {
-    "title": "Brownie",
-    "promo_type": "text",
-    "show_on": "both",
-    "text": "Onnu Vaanguna Onnu Free",
-    "image": "",
-    "video_url": "",
-    "is_active": true,
-    "start_date": null,
-    "end_date": null,
-    "created_at": "2026-05-10T18:15:06.174Z"
   }
 }
 ]
