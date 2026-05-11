@@ -268,18 +268,17 @@ class PromotionAdmin(admin.ModelAdmin):
         ('📅 Schedule (optional)', {
             'fields': ('start_date', 'end_date')
         }),
-    )    readonly_fields = ('img_preview', 'created_at')
+    )
+
+    readonly_fields = ('img_preview', 'created_at')
 
     def img_preview(self, obj):
         if obj.image:
-            return format_html('<img src="{}" style="max-width:300px;max-height:160px;object-fit:cover;border-radius:10px;margin-top:6px">', obj.image.url)
-        return '—'
-    img_preview.short_description = "Image Preview"
-
-    def promo_preview(self, obj):
-    if obj.image:
-        return format_html('<img src="{}" style="width:48px;height:48px;object-fit:cover;border-radius:8px">', obj.image.url)
-    if obj.promo_type == 'video':
+            return format_html(
+                '<img src="{}" style="max-width:300px;max-height:160px;border-radius:10px;">',
+                obj.image.url
+            )
+        return '—'    if obj.promo_type == 'video':
         return format_html('<span style="font-size:20px">🎬</span>')
     return format_html('<span style="font-size:20px">📝</span>')
 
