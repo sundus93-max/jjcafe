@@ -153,7 +153,6 @@
     }
     .card-body p {
       font-size: 0.83rem; color: var(--muted); line-height: 1.5;
-      min-height: 38px;
     }
 
     .card-footer {
@@ -254,7 +253,7 @@
         <h3>{{ item.name }}</h3>
         <p>{{ item.description }}</p>
         <div class="card-footer">
-          <div class="price">AED {{ item.price }} <span>per item</span></div>
+          <div class="price">INR {{ item.price }} <span>per item</span></div>
           <button class="add-btn" onclick="openModal({{ item.id }}, '{{ item.name|escapejs }}', '{{ item.price }}')">+ Add</button>
         </div>
       </div>
@@ -285,7 +284,7 @@
         <h3>{{ item.name }}</h3>
         <p>{{ item.description }}</p>
         <div class="card-footer">
-          <div class="price">AED {{ item.price }}</div>
+          <div class="price">INR {{ item.price }}</div>
           <button class="add-btn" onclick="openModal({{ item.id }}, '{{ item.name|escapejs }}', '{{ item.price }}')">+ Add</button>
         </div>
       </div>
@@ -336,10 +335,10 @@
     currentPrice = parseFloat(itemPrice);
     currentQty   = 1;
     document.getElementById('modal-item-name').textContent  = itemName;
-    document.getElementById('modal-item-price').textContent = 'AED ' + parseFloat(itemPrice).toFixed(2) + ' per item';
+    document.getElementById('modal-item-price').textContent = 'INR ' + parseFloat(itemPrice).toFixed(2) + ' per item';
     document.getElementById('modal-qty').textContent        = '1';
     document.getElementById('form-qty').value               = '1';
-    document.getElementById('modal-subtotal').textContent   = 'Subtotal: AED ' + currentPrice.toFixed(2);
+    document.getElementById('modal-subtotal').textContent   = 'Subtotal: INR ' + currentPrice.toFixed(2);
     document.getElementById('add-cart-form').action         = '/add-to-cart/' + itemId + '/';
     var modal = document.getElementById('qty-modal');
     modal.style.display = 'flex';
@@ -355,7 +354,7 @@
     currentQty = Math.max(1, currentQty + delta);
     document.getElementById('modal-qty').textContent  = currentQty;
     document.getElementById('form-qty').value         = currentQty;
-    document.getElementById('modal-subtotal').textContent = 'Subtotal: AED ' + (currentPrice * currentQty).toFixed(2);
+    document.getElementById('modal-subtotal').textContent = 'Subtotal: INR ' + (currentPrice * currentQty).toFixed(2);
   }
 
   // Close modal on backdrop click
