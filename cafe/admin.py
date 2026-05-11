@@ -1,35 +1,16 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User, Group
 from django.utils.html import format_html
 from .models import (
     SiteBranding, Category, Item, ContactInfo, StorySection,
-    CustomerProfile, Order, OrderItem, Promotion, PaymentMethod,
-    OrderNotification, StaffUserProxy, CustomerUserProxy
+    CustomerProfile, Order, OrderItem, Promotion, PaymentMethod
 )
 
-# ── Remove default Users and Groups from admin ────────────────
+# ── Remove default Users and Groups from admin ────────────────────────────────
 admin.site.unregister(User)
 admin.site.unregister(Group)
 
-# ── Hide allauth admin entries ────────────────────────────────
-def _unregister_allauth():
-    try:
-        from allauth.account.models import EmailAddress
-        admin.site.unregister(EmailAddress)
-    except Exception:
-        pass
-    try:
-        from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
-        for model in (SocialApp, SocialAccount, SocialToken):
-            try:
-                admin.site.unregister(model)
-            except Exception:
-                pass
-    except Exception:
-        pass
-
-_unregister_allauth()
 
 # ══════════════════════════════════════════════════════════════
 #  CUSTOM ADMIN SITE HEADER
@@ -92,27 +73,29 @@ class SiteBrandingAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  2. STAFF USERS
+#  2. STAFF & CUSTOMER PROXY MODELS
+#  NOTE: defined here with app_label="cafe" to avoid allauth clash
 # ══════════════════════════════════════════════════════════════
+class StaffUserProxy(User):
+    class Meta:
+        proxy               = True
+        verbose_name        = "Staff Member"
+        verbose_name_plural = "Staff Members"
+        app_label           = "cafe"   # ← cafe NOT auth, avoids allauth migration clash
+
+class CustomerUserProxy(User):
+    class Meta:
+        proxy               = True
+        verbose_name        = "Customer Account"
+        verbose_name_plural = "Customer Accounts"
+        app_label           = "cafe"   # ← cafe NOT auth, avoids allauth migration clash
+
+
 @admin.register(StaffUserProxy)
 class StaffUserAdmin(BaseUserAdmin):
     list_display  = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'date_joined')
     list_filter   = ('is_staff', 'is_superuser', 'is_active')
     search_fields = ('username', 'email')
-
-    fieldsets = (
-        ('Account',       {'fields': ('username', 'password')}),
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'email')}),
-        ('Permissions',   {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Dates',         {'fields': ('last_login', 'date_joined')}),
-    )
-
-    add_fieldsets = (
-        ('Create Staff Account', {
-            'classes': ('wide',),
-            'fields': ('username', 'email', 'first_name', 'last_name', 'password1', 'password2'),
-        }),
-    )
 
     def get_queryset(self, request):
         return super().get_queryset(request).filter(is_staff=True)
@@ -122,9 +105,6 @@ class StaffUserAdmin(BaseUserAdmin):
         super().save_model(request, obj, form, change)
 
 
-# ══════════════════════════════════════════════════════════════
-#  3. CUSTOMERS
-# ══════════════════════════════════════════════════════════════
 class CustomerProfileInline(admin.StackedInline):
     model  = CustomerProfile
     extra  = 0
@@ -172,7 +152,7 @@ class CustomerUserAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  4. CATEGORY + MENU ITEMS
+#  3. CATEGORY + MENU ITEMS
 # ══════════════════════════════════════════════════════════════
 class ItemInline(admin.TabularInline):
     model           = Item
@@ -182,7 +162,10 @@ class ItemInline(admin.TabularInline):
 
     def image_preview(self, obj):
         if obj.image:
-            return format_html('<img src="{}" style="width:55px;height:55px;object-fit:cover;border-radius:8px">', obj.image.url)
+            return format_html(
+                '<img src="{}" style="width:55px;height:55px;object-fit:cover;border-radius:8px">',
+                obj.image.url
+            )
         return '—'
     image_preview.short_description = "Preview"
 
@@ -219,7 +202,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  5. ORDERS
+#  4. ORDERS
 # ══════════════════════════════════════════════════════════════
 class OrderItemInline(admin.TabularInline):
     model           = OrderItem
@@ -242,8 +225,8 @@ class OrderAdmin(admin.ModelAdmin):
     inlines            = [OrderItemInline]
 
     fieldsets = (
-        ('Customer', {'fields': ('user', 'name', 'email', 'phone')}),
-        ('Order',    {'fields': ('status', 'total', 'payment_ref', 'created_at')}),
+        ('Customer',    {'fields': ('user', 'name', 'email', 'phone')}),
+        ('Order',       {'fields': ('status', 'total', 'payment_ref', 'created_at')}),
     )
 
     def status_badge(self, obj):
@@ -288,7 +271,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  6. PROMOTIONS
+#  5. PROMOTIONS
 # ══════════════════════════════════════════════════════════════
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
@@ -302,11 +285,15 @@ class PromotionAdmin(admin.ModelAdmin):
         ('📢 Promotion Details', {
             'fields': ('title', 'promo_type', 'is_active'),
         }),
-        ('📝 Content', {
+        ('📝 Content  (fill only what matches your type above)', {
             'fields': ('text', 'image', 'img_preview', 'video_url'),
-            'description': 'Text Banner → fill Text only | Image → upload Image only | Video → paste Video URL only',
+            'description': (
+                'Text Banner → fill <b>Text</b> only | '
+                'Image → upload <b>Image</b> only | '
+                'Video → paste <b>Video URL</b> only'
+            ),
         }),
-        ('📅 Schedule (optional)', {
+        ('📅 Schedule  (optional)', {
             'fields': ('start_date', 'end_date'),
             'description': 'Leave blank to always show.',
         }),
@@ -315,7 +302,10 @@ class PromotionAdmin(admin.ModelAdmin):
 
     def img_preview(self, obj):
         if obj.image:
-            return format_html('<img src="{}" style="max-width:300px;max-height:160px;object-fit:cover;border-radius:10px;margin-top:6px">', obj.image.url)
+            return format_html(
+                '<img src="{}" style="max-width:300px;max-height:160px;object-fit:cover;border-radius:10px;margin-top:6px">',
+                obj.image.url
+            )
         return '—'
     img_preview.short_description = "Image Preview"
 
@@ -335,6 +325,12 @@ class PromotionAdmin(admin.ModelAdmin):
         )
     type_badge.short_description = "Type"
 
+    def active_badge(self, obj):
+        if obj.is_active:
+            return format_html('<span style="color:#27ae60;font-weight:bold">✅ Active</span>')
+        return format_html('<span style="color:#999">⏸ Inactive</span>')
+    active_badge.short_description = "Status"
+
     def date_range(self, obj):
         if obj.start_date and obj.end_date:
             return f"{obj.start_date} → {obj.end_date}"
@@ -343,7 +339,7 @@ class PromotionAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  7. FIND US + OUR STORY
+#  6. FIND US + OUR STORY
 # ══════════════════════════════════════════════════════════════
 @admin.register(ContactInfo)
 class ContactInfoAdmin(admin.ModelAdmin):
@@ -368,7 +364,7 @@ class StorySectionAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  8. PAYMENT METHODS
+#  7. PAYMENT METHODS
 # ══════════════════════════════════════════════════════════════
 @admin.register(PaymentMethod)
 class PaymentMethodAdmin(admin.ModelAdmin):
@@ -396,16 +392,19 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  9. ORDER NOTIFICATIONS
+#  ROLE MANAGEMENT
 # ══════════════════════════════════════════════════════════════
+from django.contrib.auth.admin import GroupAdmin
+admin.site.register(Group, GroupAdmin)
+
+
+# ══════════════════════════════════════════════════════════════
+#  ORDER NOTIFICATIONS
+# ══════════════════════════════════════════════════════════════
+from .models import OrderNotification
+
 @admin.register(OrderNotification)
 class OrderNotificationAdmin(admin.ModelAdmin):
     list_display = ('user', 'message', 'is_read', 'created_at')
     list_filter  = ('is_read',)
     ordering     = ('-created_at',)
-
-
-# ══════════════════════════════════════════════════════════════
-#  10. GROUPS
-# ══════════════════════════════════════════════════════════════
-admin.site.register(Group, GroupAdmin)
