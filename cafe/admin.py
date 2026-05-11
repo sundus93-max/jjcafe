@@ -4,46 +4,30 @@ from django.contrib.auth.models import User, Group
 from django.utils.html import format_html
 from .models import (
     SiteBranding, Category, Item, ContactInfo, StorySection,
-    CustomerProfile, Order, OrderItem, Promotion, PaymentMethod
+    CustomerProfile, Order, OrderItem, Promotion, PaymentMethod,
+    StaffUserProxy, CustomerUserProxy,
+    OrderNotification,
 )
-
-# ── Import proxy models from Django auth (created by allauth migration) ───────
-from django.contrib.auth.models import StaffUserProxy, CustomerUserProxy
 
 # ── Remove default Users and Groups from admin ────────────────────────────────
 admin.site.unregister(User)
 admin.site.unregister(Group)
 
-
-# ══════════════════════════════════════════════════════════════
-#  CUSTOM ADMIN SITE HEADER
-# ══════════════════════════════════════════════════════════════
 admin.site.site_header  = "☕ JJCafe Admin Portal"
 admin.site.site_title   = "JJCafe Admin"
 admin.site.index_title  = "Welcome to JJCafe Management"
 
 
 # ══════════════════════════════════════════════════════════════
-#  1. SITE BRANDING  (logo + background)
+#  1. SITE BRANDING
 # ══════════════════════════════════════════════════════════════
 @admin.register(SiteBranding)
 class SiteBrandingAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('🏷️ App Identity', {
-            'fields': ('app_name', 'tagline'),
-        }),
-        ('🌐 Website Images', {
-            'fields': ('website_logo', 'website_logo_preview', 'website_background', 'website_bg_preview'),
-            'description': 'These images show on the public website.',
-        }),
-        ('⚙️ Admin Portal Images', {
-            'fields': ('admin_logo', 'admin_logo_preview', 'admin_background', 'admin_bg_preview'),
-            'description': 'These images show inside this admin portal only. Leave blank to use website images.',
-        }),
-        ('🎨 Colors', {
-            'fields': ('primary_color', 'secondary_color'),
-            'description': 'Use hex codes e.g. #c8883a',
-        }),
+        ('🏷️ App Identity', {'fields': ('app_name', 'tagline')}),
+        ('🌐 Website Images', {'fields': ('website_logo', 'website_logo_preview', 'website_background', 'website_bg_preview'), 'description': 'These images show on the public website.'}),
+        ('⚙️ Admin Portal Images', {'fields': ('admin_logo', 'admin_logo_preview', 'admin_background', 'admin_bg_preview'), 'description': 'Leave blank to use website images.'}),
+        ('🎨 Colors', {'fields': ('primary_color', 'secondary_color'), 'description': 'Use hex codes e.g. #c8883a'}),
     )
     readonly_fields = ('website_logo_preview', 'website_bg_preview', 'admin_logo_preview', 'admin_bg_preview')
 
@@ -76,7 +60,7 @@ class SiteBrandingAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  2. STAFF USERS  (separate from customers)
+#  2. STAFF USERS
 # ══════════════════════════════════════════════════════════════
 @admin.register(StaffUserProxy)
 class StaffUserAdmin(BaseUserAdmin):
@@ -92,6 +76,9 @@ class StaffUserAdmin(BaseUserAdmin):
         super().save_model(request, obj, form, change)
 
 
+# ══════════════════════════════════════════════════════════════
+#  3. CUSTOMER USERS
+# ══════════════════════════════════════════════════════════════
 class CustomerProfileInline(admin.StackedInline):
     model  = CustomerProfile
     extra  = 0
@@ -99,11 +86,10 @@ class CustomerProfileInline(admin.StackedInline):
 
 @admin.register(CustomerUserProxy)
 class CustomerUserAdmin(admin.ModelAdmin):
-    list_display  = ('customer_name', 'email_addr', 'phone_num', 'total_orders_num', 'date_joined')
-    search_fields = ('username', 'email', 'customer_profile__phone')
-    inlines       = [CustomerProfileInline]
+    list_display    = ('customer_name', 'email_addr', 'phone_num', 'total_orders_num', 'date_joined')
+    search_fields   = ('username', 'email', 'customer_profile__phone')
+    inlines         = [CustomerProfileInline]
     readonly_fields = ('date_joined', 'last_login')
-
     fieldsets = (
         ('Account Info', {'fields': ('username', 'email', 'first_name', 'last_name', 'is_active')}),
         ('Dates',        {'fields': ('date_joined', 'last_login')}),
@@ -113,8 +99,7 @@ class CustomerUserAdmin(admin.ModelAdmin):
         return super().get_queryset(request).filter(is_staff=False, is_superuser=False)
 
     def customer_name(self, obj):
-        name = obj.get_full_name()
-        return name if name else obj.username
+        return obj.get_full_name() or obj.username
     customer_name.short_description = "Name"
 
     def email_addr(self, obj):
@@ -139,7 +124,7 @@ class CustomerUserAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  3. CATEGORY + MENU ITEMS
+#  4. CATEGORY + MENU ITEMS
 # ══════════════════════════════════════════════════════════════
 class ItemInline(admin.TabularInline):
     model           = Item
@@ -149,10 +134,7 @@ class ItemInline(admin.TabularInline):
 
     def image_preview(self, obj):
         if obj.image:
-            return format_html(
-                '<img src="{}" style="width:55px;height:55px;object-fit:cover;border-radius:8px">',
-                obj.image.url
-            )
+            return format_html('<img src="{}" style="width:55px;height:55px;object-fit:cover;border-radius:8px">', obj.image.url)
         return '—'
     image_preview.short_description = "Preview"
 
@@ -197,16 +179,16 @@ class ItemAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  4. ORDERS
+#  5. ORDERS
 # ══════════════════════════════════════════════════════════════
 class OrderItemInline(admin.TabularInline):
-    model         = OrderItem
-    extra         = 0
+    model           = OrderItem
+    extra           = 0
     readonly_fields = ('name', 'price', 'quantity', 'subtotal')
-    fields        = ('name', 'price', 'quantity', 'subtotal')
+    fields          = ('name', 'price', 'quantity', 'subtotal')
 
     def subtotal(self, obj):
-        return f"AED {obj.subtotal}"
+        return f"INR {obj.subtotal}"
     subtotal.short_description = "Subtotal"
 
 
@@ -224,8 +206,8 @@ class OrderAdmin(admin.ModelAdmin):
         css = {'all': ('admin/css/custom_admin.css',)}
 
     fieldsets = (
-        ('Customer',    {'fields': ('user', 'name', 'email', 'phone')}),
-        ('Order',       {'fields': ('status', 'total', 'payment_ref', 'created_at')}),
+        ('Customer', {'fields': ('user', 'name', 'email', 'phone')}),
+        ('Order',    {'fields': ('status', 'total', 'payment_ref', 'created_at')}),
     )
 
     def status_badge(self, obj):
@@ -235,10 +217,7 @@ class OrderAdmin(admin.ModelAdmin):
             'completed': '#95a5a6', 'cancelled': '#e74c3c',
         }
         color = colors.get(obj.status, '#999')
-        return format_html(
-            '<span style="background:{};color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:bold">{}</span>',
-            color, obj.get_status_display()
-        )
+        return format_html('<span style="background:{};color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:bold">{}</span>', color, obj.get_status_display())
     status_badge.short_description = "Status"
 
     def customer_info(self, obj):
@@ -246,12 +225,11 @@ class OrderAdmin(admin.ModelAdmin):
     customer_info.short_description = "Customer"
 
     def total_display(self, obj):
-        return format_html('<b style="color:#c8883a">AED {}</b>', obj.total)
+        return format_html('<b style="color:#c8883a">INR {}</b>', obj.total)
     total_display.short_description = "Total"
 
     def save_model(self, request, obj, form, change):
         if change and 'status' in form.changed_data and obj.user:
-            from .models import OrderNotification
             status_msgs = {
                 'paid':      '✅ Your order #{} has been paid and confirmed!',
                 'preparing': '👨‍🍳 Your order #{} is now being prepared.',
@@ -270,7 +248,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  5. PROMOTIONS
+#  6. PROMOTIONS
 # ══════════════════════════════════════════════════════════════
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
@@ -279,32 +257,16 @@ class PromotionAdmin(admin.ModelAdmin):
     search_fields      = ('title', 'text')
     list_display_links = ('title',)
     list_editable      = ('is_active',)
-
     fieldsets = (
-        ('📢 Promotion Details', {
-            'fields': ('title', 'promo_type', 'is_active'),
-        }),
-        ('📝 Content  (fill only what matches your type above)', {
-            'fields': ('text', 'image', 'img_preview', 'video_url'),
-            'description': (
-                'Text Banner → fill <b>Text</b> only | '
-                'Image → upload <b>Image</b> only | '
-                'Video → paste <b>Video URL</b> only'
-            ),
-        }),
-        ('📅 Schedule  (optional)', {
-            'fields': ('start_date', 'end_date'),
-            'description': 'Leave blank to always show.',
-        }),
+        ('📢 Promotion Details', {'fields': ('title', 'promo_type', 'is_active')}),
+        ('📝 Content', {'fields': ('text', 'image', 'img_preview', 'video_url'), 'description': 'Text Banner → fill Text only | Image → upload Image only | Video → paste Video URL only'}),
+        ('📅 Schedule (optional)', {'fields': ('start_date', 'end_date'), 'description': 'Leave blank to always show.'}),
     )
     readonly_fields = ('img_preview', 'created_at')
 
     def img_preview(self, obj):
         if obj.image:
-            return format_html(
-                '<img src="{}" style="max-width:300px;max-height:160px;object-fit:cover;border-radius:10px;margin-top:6px">',
-                obj.image.url
-            )
+            return format_html('<img src="{}" style="max-width:300px;max-height:160px;object-fit:cover;border-radius:10px;margin-top:6px">', obj.image.url)
         return '—'
     img_preview.short_description = "Image Preview"
 
@@ -318,17 +280,8 @@ class PromotionAdmin(admin.ModelAdmin):
 
     def type_badge(self, obj):
         colors = {'text': '#3498db', 'image': '#9b59b6', 'video': '#e74c3c'}
-        return format_html(
-            '<span style="background:{};color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:bold">{}</span>',
-            colors.get(obj.promo_type, '#999'), obj.get_promo_type_display()
-        )
+        return format_html('<span style="background:{};color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:bold">{}</span>', colors.get(obj.promo_type, '#999'), obj.get_promo_type_display())
     type_badge.short_description = "Type"
-
-    def active_badge(self, obj):
-        if obj.is_active:
-            return format_html('<span style="color:#27ae60;font-weight:bold">✅ Active</span>')
-        return format_html('<span style="color:#999">⏸ Inactive</span>')
-    active_badge.short_description = "Status"
 
     def date_range(self, obj):
         if obj.start_date and obj.end_date:
@@ -338,7 +291,7 @@ class PromotionAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  6. FIND US + OUR STORY
+#  7. FIND US + OUR STORY
 # ══════════════════════════════════════════════════════════════
 @admin.register(ContactInfo)
 class ContactInfoAdmin(admin.ModelAdmin):
@@ -363,7 +316,7 @@ class StorySectionAdmin(admin.ModelAdmin):
 
 
 # ══════════════════════════════════════════════════════════════
-#  7. PAYMENT METHODS
+#  8. PAYMENT METHODS
 # ══════════════════════════════════════════════════════════════
 @admin.register(PaymentMethod)
 class PaymentMethodAdmin(admin.ModelAdmin):
@@ -383,25 +336,20 @@ class PaymentMethodAdmin(admin.ModelAdmin):
                 ('Google Pay',          'google_pay',       '📱', 5, False),
             ]
             for name, mtype, icon, order, enabled in defaults:
-                PaymentMethod.objects.get_or_create(
-                    method_type=mtype,
-                    defaults={'name': name, 'icon': icon, 'order': order, 'is_enabled': enabled}
-                )
+                PaymentMethod.objects.get_or_create(method_type=mtype, defaults={'name': name, 'icon': icon, 'order': order, 'is_enabled': enabled})
         return super().get_queryset(request)
 
 
 # ══════════════════════════════════════════════════════════════
-#  ROLE MANAGEMENT
+#  9. ROLE MANAGEMENT
 # ══════════════════════════════════════════════════════════════
 from django.contrib.auth.admin import GroupAdmin
 admin.site.register(Group, GroupAdmin)
 
 
 # ══════════════════════════════════════════════════════════════
-#  ORDER NOTIFICATIONS
+#  10. ORDER NOTIFICATIONS
 # ══════════════════════════════════════════════════════════════
-from .models import OrderNotification
-
 @admin.register(OrderNotification)
 class OrderNotificationAdmin(admin.ModelAdmin):
     list_display = ('user', 'message', 'is_read', 'created_at')
