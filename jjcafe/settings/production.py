@@ -31,12 +31,12 @@ CSRF_TRUSTED_ORIGINS = [
     'https://jjcafe.onrender.com',
 ]
 
-# ✅ PostgreSQL on Render via environment variable
+# ✅ Database — reads from DATABASE_URL environment variable
 DATABASES = {
     "default": dj_database_url.config(
-        default='postgresql://jjcafe_user:zbvU17KfeVAamXG4sj9xeG5aMXE4VM0L@dpg-d804jqbtqb8s73fr8gtg-a.virginia-postgres.render.com/jjcafe',
+        env='DATABASE_URL',
         conn_max_age=600,
-        ssl_require=True
+        ssl_require=True,
     )
 }
 
