@@ -25,11 +25,11 @@ CSRF_TRUSTED_ORIGINS = [
 # Supabase PostgreSQL via connection pooler (port 6543)
 DATABASES = {
     "default": dj_database_url.parse(
-        'postgresql://postgres.ghpcsykhbfjzfxqsehqd:JJJCafeLPT2026aws-1-ap-south-1.pooler.supabase.com:5432/postgres',
+        os.environ.get("DATABASE_URL"),
         conn_max_age=600,
+        ssl_require=True,
     )
 }
- 
  
 # Cloudinary for media uploads
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
