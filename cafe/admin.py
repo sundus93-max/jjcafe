@@ -44,8 +44,8 @@ admin.site.index_title  = "Welcome to JJCafe Management"
 class SiteBrandingAdmin(admin.ModelAdmin):
     fieldsets = (
         ('🏷️ App Identity', {'fields': ('app_name', 'tagline')}),
-        ('🌐 Website Images', {'fields': ('website_logo', 'website_logo_preview', 'website_background', 'website_bg_preview'), 'description': 'These images show on the public website.'}),
-        ('⚙️ Admin Portal Images', {'fields': ('admin_logo', 'admin_logo_preview', 'admin_background', 'admin_bg_preview'), 'description': 'Leave blank to use website images.'}),
+        ('🌐 Website Images', {'fields': ('website_logo', 'website_background'), 'description': 'These images show on the public website.'}),
+        ('⚙️ Admin Portal Images', {'fields': ('admin_logo', 'admin_background'), 'description': 'Leave blank to use website images.'}),
         ('🎨 Colors', {'fields': ('primary_color', 'secondary_color'), 'description': 'Use hex codes e.g. #c8883a'}),
     )
     readonly_fields = ('website_logo_preview', 'website_bg_preview', 'admin_logo_preview', 'admin_bg_preview')
@@ -53,7 +53,7 @@ class SiteBrandingAdmin(admin.ModelAdmin):
     def website_logo_preview(self, obj):
         if obj.website_logo:
             return format_html('<img src="{}" style="width:80px;height:80px;object-fit:cover;border-radius:50%;border:3px solid #c8883a;margin-top:6px">', obj.website_logo.url)
-        return format_html('<span style="color:#999">Not set</span>')
+        return format_html('<span style="color:#999">Not set</span>',"")
     website_logo_preview.short_description = "Preview"
 
     def website_bg_preview(self, obj):
