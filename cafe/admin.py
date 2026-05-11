@@ -272,7 +272,7 @@ class OrderAdmin(admin.ModelAdmin):
 # ══════════════════════════════════════════════════════════════
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
-    list_display       = ('promo_preview', 'title', 'type_badge', 'is_active', 'date_range', 'created_at')
+    list_display = ('title', 'promo_preview', 'type_badge', 'is_active', 'date_range', 'created_at')
     list_filter        = ('is_active', 'promo_type')
     search_fields      = ('title', 'text')
     list_display_links = ('title',)
@@ -295,7 +295,7 @@ class PromotionAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="width:48px;height:48px;object-fit:cover;border-radius:8px">', obj.image.url)
         if obj.promo_type == 'video':
             return format_html('<span style="font-size:20px">🎬</span>')
-        return format_html('<span style="font-size:20px">📝</span>')
+        return format_html('<span style="font-size:20px">📝</span>', "")
     promo_preview.short_description = ""
 
     def type_badge(self, obj):
